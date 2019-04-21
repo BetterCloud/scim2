@@ -3,7 +3,7 @@ SCIM 2.0 SDK for Spring
 
 [SCIM](http://www.simplecloud.info), or _System for Cross-domain Identity Management_, is an IETF standard that defines an extensible schema mechanism and REST API for **managing users and other identity data**. SCIM is used by a variety of vendors — including Okta, Slack and Microsoft.
 
-The BetterCloud SCIM 2.0 SDK provides a set of libraries for creating new SCIM services quickly utilizing Spring. The SDK is branched from the Branched from the [Ping Identity SCIM 2.0 SDK](https://github.com/pingidentity/scim2).
+The BetterCloud SCIM 2.0 SDK provides a set of libraries for creating new SCIM services quickly utilizing Spring. The SDK is branched from the [Ping Identity SCIM 2.0 SDK](https://github.com/pingidentity/scim2).
 
 The SCIM 2.0 SDK consists of the following libraries:
 
@@ -109,7 +109,7 @@ scim2:
 
 Adding Resources
 --------------------------
-Any controller annotated with  @ScimResource and @RequestMapping will be detected and will be auto configured as a ResourceTypeDefinition.  If the resource is discoverable the /ResourceTypes and /Schemas discovery APIs will be automatically configured to serve these resource.
+Any controller annotated with  @ScimResource and @RequestMapping will be detected and will be auto configured as a ResourceTypeDefinition.  If the resource is discoverable the /ResourceTypes and /Schemas discovery APIs will be automatically configured to serve these resource.  
 **Example**
 ```java
 @RestController
