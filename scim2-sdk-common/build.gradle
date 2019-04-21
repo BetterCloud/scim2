@@ -1,0 +1,16 @@
+archivesBaseName = 'scim2-sdk-common'
+version '1.0.0'
+
+test {
+    // enable TestNG support (default is JUnit)
+    useTestNG()
+}
+
+dependencies {
+    implementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: "$jackson_version"
+    implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: "$jackson_version"
+    implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "$jackson_databind_version"
+    implementation group: "com.google.guava", name: "guava", version: "$guava_version"
+    implementation group: "org.projectlombok", name: "lombok"
+    testImplementation group: "org.testng", name: "testng", version: "$testng_version"
+}

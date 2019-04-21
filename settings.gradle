@@ -1,0 +1,4 @@
+rootProject.name = 'scim2'
+include 'scim2-sdk-common'
+include 'spring-boot-starter-scim2'
+

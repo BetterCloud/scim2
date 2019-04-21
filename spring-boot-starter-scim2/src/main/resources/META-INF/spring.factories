@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.bettercloud.scim2.server.config.Scim2AutoConfiguration

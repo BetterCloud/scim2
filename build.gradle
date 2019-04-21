@@ -1,0 +1,147 @@
+plugins {
+    id "io.spring.dependency-management" version "1.0.6.RELEASE" apply false
+}
+
+allprojects {
+    apply plugin: "io.spring.dependency-management"
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.3.RELEASE"
+        }
+    }
+}
+
+subprojects { project ->
+
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    group "com.bettercloud"
+    ext.isReleaseVersion = !version.endsWith('SNAPSHOT')
+
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'signing'
+
+    sourceCompatibility = 1.8
+
+    compileJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+    compileTestJava {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+    dependencies {
+        implementation group: "com.google.guava", name: "guava", version: "$guava_version"
+
+        compileOnly group: "org.projectlombok", name: "lombok"
+        annotationProcessor group: "org.projectlombok", name: "lombok"
+
+        testImplementation "junit:junit"
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '4.10.2'
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    //
+    // Deploying releases to Maven Central (or snapshots to a local Nexus repository).
+    //
+    // Snapshots are not signed... but signing the release artifact requires the following project properties:
+    //
+    // signing.keyId = <ID of the private key in your secure keyring used for signing JAR's>
+    // signing.password = <public key password>
+    // signing.secretKeyRingFile = <full path to your keyring file (i.e secring.gpg)>
+    //
+    if (!hasProperty('ossrhUsername')) {
+        ext.ossrhUsername = ''
+    }
+    if (!hasProperty('ossrhPassword')) {
+        ext.ossrhPassword = ''
+    }
+    if (!hasProperty('nexusUrl')) {
+        ext.nexusUrl = ''
+    }
+    if (!hasProperty('nexusUsername')) {
+        ext.nexusUsername = ''
+    }
+    if (!hasProperty('nexusPassword')) {
+        ext.nexusPassword = ''
+    }
+
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    signing {
+        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+//            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+//                authentication(userName: ossrhUsername, password: ossrhPassword)
+//            }
+                snapshotRepository(url: nexusUrl) {
+                    authentication(userName: nexusUsername, password: nexusPassword)
+                }
+
+                pom.project {
+                    name 'vault-java-driver'
+                    packaging 'jar'
+                    // optionally artifactId can be defined here
+                    description 'Zero-dependency Java client for HashiCorp\'s Vault'
+                    url 'https://github.com/BetterCloud/vault-java-driver'
+
+                    scm {
+                        connection 'https://github.com/BetterCloud/vault-java-driver.git'
+                        developerConnection 'https://github.com/BetterCloud/vault-java-driver.git'
+                        url 'https://github.com/BetterCloud/vault-java-driver'
+                    }
+
+                    licenses {
+                        license {
+                            name 'MIT'
+                            url 'https://github.com/BetterCloud/vault-java-driver/blob/master/README.md'
+                        }
+                    }
+
+                    developers {
+                        [
+                                developer {
+                                    id 'daniel-lynch'
+                                    name 'Daniel Lynch'
+                                    email 'dantlynch@gmail.com'
+                                }
+                        ]
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,30 @@
+scim2:
+  resourcesPackage: com.bettercloud.scim2.server.controller
+  baseUrl: http://localhost
+  service-provider-config:
+    documentationUri: http://www.simplecloud.info
+    patch:
+      supported: true
+    bulk:
+      supported: true
+      maxOperations: 1000
+      maxPayloadSize: 10000
+    filter:
+      supported: false
+      maxResults: 100
+    change-password:
+      supported: true
+    sort:
+      supported: true
+    etag:
+      supported: true
+    authenticationSchemes:
+      - name: sample name
+        description: sample description
+        specUri: http://localhost
+        documentationUri: http://localhost
+        type: oauth2
+        primary: true
+
+
+
