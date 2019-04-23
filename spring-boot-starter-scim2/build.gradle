@@ -1,6 +1,3 @@
-archivesBaseName = 'spring-boot-starter-scim2'
-version '1.0.0'
-
 dependencies {
     implementation project(":scim2-sdk-common")
 

@@ -2,8 +2,39 @@ plugins {
     id "io.spring.dependency-management" version "1.0.6.RELEASE" apply false
 }
 
+group "com.bettercloud"
+version "1.0.0"
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+if (!hasProperty("ossrhUsername")) {
+    ext.ossrhUsername = ""
+}
+if (!hasProperty("ossrhPassword")) {
+    ext.ossrhPassword = ""
+}
+if (!hasProperty("nexusUrl")) {
+    ext.nexusUrl = ""
+}
+if (!hasProperty("nexusUsername")) {
+    ext.nexusUsername = ""
+}
+if (!hasProperty("nexusPassword")) {
+    ext.nexusPassword = ""
+}
+
 allprojects {
     apply plugin: "io.spring.dependency-management"
+    apply plugin: "maven"
+    apply plugin: "java-library"
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
 
     dependencyManagement {
         imports {
@@ -12,31 +43,12 @@ allprojects {
     }
 }
 
-subprojects { project ->
+subprojects {
+    apply plugin: "signing"
 
-    repositories {
-        jcenter()
-        mavenCentral()
-    }
-
-    group "com.bettercloud"
-    ext.isReleaseVersion = !version.endsWith('SNAPSHOT')
-
-    apply plugin: 'java'
-    apply plugin: 'maven'
-    apply plugin: 'signing'
-
-    sourceCompatibility = 1.8
-
-    compileJava {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
-
-    compileTestJava {
-        sourceCompatibility = 1.8
-        targetCompatibility = 1.8
-    }
+    group = rootProject.group
+    archivesBaseName = project.name
+    version = rootProject.version
 
     dependencies {
         implementation group: "com.google.guava", name: "guava", version: "$guava_version"
@@ -47,43 +59,14 @@ subprojects { project ->
         testImplementation "junit:junit"
     }
 
-    task wrapper(type: Wrapper) {
-        gradleVersion = '4.10.2'
-    }
-
     task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
+        archiveClassifier.set("javadoc")
+        from javadoc
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
+        archiveClassifier.set("sources")
         from sourceSets.main.allSource
-    }
-
-    //
-    // Deploying releases to Maven Central (or snapshots to a local Nexus repository).
-    //
-    // Snapshots are not signed... but signing the release artifact requires the following project properties:
-    //
-    // signing.keyId = <ID of the private key in your secure keyring used for signing JAR's>
-    // signing.password = <public key password>
-    // signing.secretKeyRingFile = <full path to your keyring file (i.e secring.gpg)>
-    //
-    if (!hasProperty('ossrhUsername')) {
-        ext.ossrhUsername = ''
-    }
-    if (!hasProperty('ossrhPassword')) {
-        ext.ossrhPassword = ''
-    }
-    if (!hasProperty('nexusUrl')) {
-        ext.nexusUrl = ''
-    }
-    if (!hasProperty('nexusUsername')) {
-        ext.nexusUsername = ''
-    }
-    if (!hasProperty('nexusPassword')) {
-        ext.nexusPassword = ''
     }
 
     artifacts {
@@ -104,39 +87,35 @@ subprojects { project ->
                     authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
 
-//            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-//                authentication(userName: ossrhUsername, password: ossrhPassword)
-//            }
                 snapshotRepository(url: nexusUrl) {
                     authentication(userName: nexusUsername, password: nexusPassword)
                 }
 
                 pom.project {
-                    name 'scim2'
-                    packaging 'jar'
-                    // optionally artifactId can be defined here
-                    description 'Zero-dependency Java client for HashiCorp\'s Vault'
-                    url 'https://github.com/BetterCloud/scim2'
+                    name "SCIM 2.0 SDK for Spring"
+                    packaging "jar"
+                    description "SCIM 2.0 SDK for Spring"
+                    url "https://github.com/BetterCloud/scim2"
 
                     scm {
-                        connection 'https://github.com/BetterCloud/scim2.git'
-                        developerConnection 'https://github.com/BetterCloud/scim2.git'
-                        url 'https://github.com/BetterCloud/scim2'
+                        connection "https://github.com/BetterCloud/scim2.git"
+                        developerConnection "https://github.com/BetterCloud/scim2.git"
+                        url "https://github.com/BetterCloud/scim2"
                     }
 
                     licenses {
                         license {
-                            name 'MIT'
-                            url 'https://github.com/BetterCloud/scim2/blob/master/README.md'
+                            name "MIT"
+                            url "https://github.com/BetterCloud/scim2/blob/master/README.md"
                         }
                     }
 
                     developers {
                         [
                                 developer {
-                                    id 'daniel-lynch'
-                                    name 'Daniel Lynch'
-                                    email 'dantlynch@gmail.com'
+                                    id "daniel-lynch"
+                                    name "Daniel Lynch"
+                                    email "dantlynch@gmail.com"
                                 }
                         ]
                     }
@@ -144,4 +123,13 @@ subprojects { project ->
             }
         }
     }
+}
+
+uploadArchives {
+    dependsOn = subprojects.uploadArchives
+    enabled = false
+}
+
+wrapper {
+    gradleVersion = '5.2.1'
 }
