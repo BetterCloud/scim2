@@ -5,8 +5,6 @@ SCIM 2.0 SDK for Spring
 
 The BetterCloud SCIM 2.0 SDK provides a set of libraries for creating new SCIM services quickly utilizing Spring. The SDK is branched from the [Ping Identity SCIM 2.0 SDK](https://github.com/pingidentity/scim2).
 
-The SCIM 2.0 SDK consists of the following libraries:
-
 Table of Contents
 -----------------
 * [SDK Components](#sdk-components)

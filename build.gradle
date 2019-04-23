@@ -112,22 +112,22 @@ subprojects { project ->
                 }
 
                 pom.project {
-                    name 'vault-java-driver'
+                    name 'scim2'
                     packaging 'jar'
                     // optionally artifactId can be defined here
                     description 'Zero-dependency Java client for HashiCorp\'s Vault'
-                    url 'https://github.com/BetterCloud/vault-java-driver'
+                    url 'https://github.com/BetterCloud/scim2'
 
                     scm {
-                        connection 'https://github.com/BetterCloud/vault-java-driver.git'
-                        developerConnection 'https://github.com/BetterCloud/vault-java-driver.git'
-                        url 'https://github.com/BetterCloud/vault-java-driver'
+                        connection 'https://github.com/BetterCloud/scim2.git'
+                        developerConnection 'https://github.com/BetterCloud/scim2.git'
+                        url 'https://github.com/BetterCloud/scim2'
                     }
 
                     licenses {
                         license {
                             name 'MIT'
-                            url 'https://github.com/BetterCloud/vault-java-driver/blob/master/README.md'
+                            url 'https://github.com/BetterCloud/scim2/blob/master/README.md'
                         }
                     }
 
