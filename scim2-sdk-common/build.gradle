@@ -8,6 +8,5 @@ dependencies {
     implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: "$jackson_version"
     implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "$jackson_databind_version"
     implementation group: "com.google.guava", name: "guava", version: "$guava_version"
-    implementation group: "org.projectlombok", name: "lombok"
     testImplementation group: "org.testng", name: "testng", version: "$testng_version"
 }
