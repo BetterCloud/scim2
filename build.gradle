@@ -1,9 +1,10 @@
 plugins {
     id "io.spring.dependency-management" version "1.0.6.RELEASE" apply false
+    id "com.palantir.git-version" version "0.12.0-rc2"
 }
 
-group "com.bettercloud"
-version "1.0.0"
+group "com.staffbase.scim2"
+version gitVersion()
 
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
@@ -81,10 +82,8 @@ subprojects {
     uploadArchives {
         repositories {
             mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                repository(url: "https://maven.pkg.github.com/${System.env.GITHUB_REPOSITORY}") {
+                    authentication(userName:  "${System.env.GITHUB_ACTOR}", password:  "${System.env.GITHUB_TOKEN}")
                 }
 
                 snapshotRepository(url: nexusUrl) {
@@ -95,12 +94,12 @@ subprojects {
                     name "SCIM 2.0 SDK for Spring"
                     packaging "jar"
                     description "SCIM 2.0 SDK for Spring"
-                    url "https://github.com/BetterCloud/scim2"
+                    url "https://github.com/Staffbase/scim2"
 
                     scm {
-                        connection "https://github.com/BetterCloud/scim2.git"
-                        developerConnection "https://github.com/BetterCloud/scim2.git"
-                        url "https://github.com/BetterCloud/scim2"
+                        connection "https://github.com/Staffbase/scim2.git"
+                        developerConnection "https://github.com/Staffbase/scim2.git"
+                        url "https://github.com/Staffbase/scim2"
                     }
 
                     licenses {

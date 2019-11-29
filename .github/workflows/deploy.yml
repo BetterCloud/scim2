@@ -1,0 +1,24 @@
+name: Deploy
+
+on: [create]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: deploy
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        ./gradlew build
+        # Dirty Workaround for some issues with the github registry.
+        # Some Artifact Uploads fail on the first try, when another artifact
+        # was uploaded within the HTTP session for some unknown reason
+        # which is probably a bug with the github registry infrastructure.
+        # 
+        # More infos:
+        # https://github.community/t5/GitHub-API-Development-and/GitHub-Package-Registry-NuGet-400-Bad-Request/td-p/29391
+        ./gradlew --continue uploadArchives || true
+        ./gradlew --continue uploadArchives || true
+        ./gradlew --continue uploadArchives || true
