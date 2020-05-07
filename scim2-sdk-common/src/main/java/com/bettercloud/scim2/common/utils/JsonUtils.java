@@ -17,6 +17,13 @@
 
 package com.bettercloud.scim2.common.utils;
 
+import com.bettercloud.scim2.common.Path;
+import com.bettercloud.scim2.common.exceptions.BadRequestException;
+import com.bettercloud.scim2.common.exceptions.ScimException;
+import com.bettercloud.scim2.common.filters.Filter;
+import com.bettercloud.scim2.common.filters.FilterType;
+import com.bettercloud.scim2.common.messages.PatchOperation;
+import com.bettercloud.scim2.common.types.AttributeDefinition;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,12 +35,6 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.databind.util.ISO8601Utils;
-import com.bettercloud.scim2.common.Path;
-import com.bettercloud.scim2.common.exceptions.BadRequestException;
-import com.bettercloud.scim2.common.exceptions.ScimException;
-import com.bettercloud.scim2.common.filters.Filter;
-import com.bettercloud.scim2.common.messages.PatchOperation;
-import com.bettercloud.scim2.common.types.AttributeDefinition;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -447,6 +448,69 @@ public class JsonUtils
     }
   }
 
+  private static class PathCreatingVisitor extends NodeVisitor
+  {
+
+    @Override
+    JsonNode visitInnerNode(final ObjectNode parent,
+                            final String field,
+                            final Filter valueFilter) throws ScimException
+    {
+      JsonNode node = parent.path(field);
+      if (node.isMissingNode())
+      {
+        node = valueFilter == null ?
+                getJsonNodeFactory().objectNode() :
+                getJsonNodeFactory().arrayNode();
+
+        parent.set(field, node);
+      }
+
+      if(valueFilter != null && node.isArray())
+      {
+        ArrayNode array = (ArrayNode) node;
+        ArrayNode retArray = filterArray(array, valueFilter, false);
+        if(retArray.size() == 0) {
+          ObjectNode objectNode = getJsonNodeFactory().objectNode();
+          populateFieldsFromFilter(objectNode, valueFilter);
+          array.add(objectNode);
+          retArray.add(objectNode);
+        }
+        return retArray;
+      }
+      else
+      {
+        return node;
+      }
+    }
+
+    @Override
+    void visitLeafNode(final ObjectNode parent,
+                       final String field,
+                       final Filter valueFilter) throws ScimException
+    {
+      if(parent.get(field) == null)
+      {
+        parent.set(field, getJsonNodeFactory().nullNode());
+      }
+    }
+
+    void populateFieldsFromFilter(ObjectNode objectNode, Filter valueFilter) throws ScimException
+    {
+      Path attributePath = valueFilter.getAttributePath();
+      if(!valueFilter.isComparisonFilter()
+              || valueFilter.getFilterType() != FilterType.EQUAL
+              || attributePath == null
+              || attributePath.size() != 1
+              || attributePath.getElement(0).getValueFilter() != null)
+      {
+        throw BadRequestException.noTarget("Unsupported Filter for path creation: " + valueFilter);
+      }
+
+      objectNode.set(attributePath.toString(), valueFilter.getComparisonValue());
+    }
+  }
+
   /**
    * Gets a single value (node) from an ObjectNode at the supplied path.
    * It is expected that there will only be one matching path.  If there
@@ -720,6 +784,27 @@ public class JsonUtils
     return pathExistsVisitor.isPathPresent();
   }
 
+  /**
+   * Creates the given path in an ObjectNode by creating missing attributes.
+   * Supports eq filters, but not others.
+   *
+   * Every missing path element will be created as either object, or - if the element
+   * has a value filter - array. If arrays do not have object matching the value filter,
+   * an appropriate object will be created within the array. The last element in the path
+   * will be created as null, if not present.
+   *
+   * @param path The path to create.
+   * @param node The JSON node in which the path should be created.
+   * @throws ScimException If an error occurs while traversing the JSON node, or if the
+   * path cannot be created, for example when a given value filter is not supported.
+   *
+   * */
+  public static void createPath(final Path path,
+                                   final ObjectNode node) throws ScimException
+  {
+    PathCreatingVisitor pathCreatesVisitor = new PathCreatingVisitor();
+    traverseValues(pathCreatesVisitor, node, 0, path);
+  }
 
 
 
