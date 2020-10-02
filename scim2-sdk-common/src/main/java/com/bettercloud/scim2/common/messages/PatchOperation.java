@@ -79,7 +79,7 @@ public abstract class PatchOperation
         @JsonProperty(value = "value", required = true) final JsonNode value)
         throws ScimException
     {
-      super(path);
+      super(path, value);
       if(value == null || value.isNull() ||
            ((value.isArray() || value.isObject()) && value.size() == 0))
        {
@@ -114,46 +114,6 @@ public abstract class PatchOperation
     public PatchOpType getOpType()
     {
       return PatchOpType.ADD;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public JsonNode getJsonNode()
-    {
-      return value.deepCopy();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> T getValue(final Class<T> cls)
-        throws JsonProcessingException, ScimException, IllegalArgumentException
-    {
-      if(value.isArray())
-      {
-        throw new IllegalArgumentException("Patch operation contains " +
-            "multiple values");
-      }
-      return JsonUtils.getObjectReader().treeToValue(
-          value, cls);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> List<T> getValues(final Class<T> cls)
-        throws JsonProcessingException, ScimException
-    {
-      ArrayList<T> objects = new ArrayList<T>(value.size());
-      for(JsonNode node : value)
-      {
-        objects.add(JsonUtils.getObjectReader().treeToValue(node, cls));
-      }
-      return objects;
     }
 
     /**
@@ -218,10 +178,11 @@ public abstract class PatchOperation
      */
     @JsonCreator
     private RemoveOperation(
-        @JsonProperty(value = "path", required = true) final Path path)
+        @JsonProperty(value = "path", required = true) final Path path,
+        @JsonProperty(value = "value") final JsonNode value)
         throws ScimException
     {
-      super(path);
+      super(path, value);
       if(path == null)
       {
         throw BadRequestException.noTarget(
@@ -301,7 +262,7 @@ public abstract class PatchOperation
         @JsonProperty(value = "value", required = true) final JsonNode value)
         throws ScimException
     {
-      super(path);
+      super(path, value);
       if(value == null || value.isNull() ||
            ((value.isArray() || value.isObject()) && value.size() == 0))
        {
@@ -324,45 +285,6 @@ public abstract class PatchOperation
     public PatchOpType getOpType()
     {
       return PatchOpType.REPLACE;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public JsonNode getJsonNode()
-    {
-      return value.deepCopy();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> T getValue(final Class<T> cls)
-        throws JsonProcessingException, ScimException, IllegalArgumentException
-    {
-      if(value.isArray())
-      {
-        throw new IllegalArgumentException("Patch operation contains " +
-            "multiple values");
-      }
-      return JsonUtils.getObjectReader().treeToValue(value, cls);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public <T> List<T> getValues(final Class<T> cls)
-        throws JsonProcessingException, ScimException
-    {
-      ArrayList<T> objects = new ArrayList<T>(value.size());
-      for(JsonNode node : value)
-      {
-        objects.add(JsonUtils.getObjectReader().treeToValue(node, cls));
-      }
-      return objects;
     }
 
     /**
@@ -420,14 +342,19 @@ public abstract class PatchOperation
 
   private final Path path;
 
+  @JsonProperty
+  private final JsonNode value;
+
   /**
    * Create a new patch operation.
    *
    * @param path The path targeted by this patch operation.
+   * @param value The value containing the patch operations members.
    * @throws ScimException If an value is not valid.
    */
-  PatchOperation(final Path path) throws ScimException
+  PatchOperation(final Path path, JsonNode value) throws ScimException
   {
+    this.value = value;
     if(path != null)
     {
       if(path.size() > 2)
@@ -475,13 +402,12 @@ public abstract class PatchOperation
    * returned JsonNode is a copy so it may be altered without altering this
    * operation.
    *
-   * @return  The value or values of the patch operation, or {@code null}
-   *          if this operation is a remove operation.
+   * @return  The value or values of the patch operation.
    */
   @JsonIgnore
   public JsonNode getJsonNode()
   {
-    return null;
+    return value.deepCopy();
   }
 
   /**
@@ -501,7 +427,13 @@ public abstract class PatchOperation
   public <T> T getValue(final Class<T> cls)
       throws JsonProcessingException, ScimException, IllegalArgumentException
   {
-    return null;
+    if(value.isArray())
+    {
+      throw new IllegalArgumentException("Patch operation contains " +
+              "multiple values");
+    }
+    return JsonUtils.getObjectReader().treeToValue(
+            value, cls);
   }
 
   /**
@@ -518,7 +450,12 @@ public abstract class PatchOperation
   public <T> List<T> getValues(final Class<T> cls)
       throws JsonProcessingException, ScimException
   {
-    return null;
+    ArrayList<T> objects = new ArrayList<T>(value.size());
+    for(JsonNode node : value)
+    {
+      objects.add(JsonUtils.getObjectReader().treeToValue(node, cls));
+    }
+    return objects;
   }
 
   /**
@@ -1321,7 +1258,27 @@ public abstract class PatchOperation
   {
     try
     {
-      return new RemoveOperation(path);
+      return new RemoveOperation(path, null);
+    }
+    catch (ScimException e)
+    {
+      throw new IllegalArgumentException(e);
+    }
+  }
+
+  /**
+   * Create a new remove patch operation.
+   *
+   * @param path The path targeted by this patch operation.
+   * @param value The value containing the patch operation's members.
+   *
+   * @return The new delete patch operation.
+   */
+  public static PatchOperation remove(final Path path, final JsonNode value)
+  {
+    try
+    {
+      return new RemoveOperation(path, value);
     }
     catch (ScimException e)
     {
