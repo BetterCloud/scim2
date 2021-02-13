@@ -105,7 +105,7 @@ subprojects {
                     licenses {
                         license {
                             name "MIT"
-                            url "https://github.com/BetterCloud/scim2/blob/master/README.md"
+                            url "https://github.com/Staffbase/scim2/blob/master/README.md"
                         }
                     }
 
@@ -115,6 +115,11 @@ subprojects {
                                     id "daniel-lynch"
                                     name "Daniel Lynch"
                                     email "dantlynch@gmail.com"
+				},
+                                developer {
+                                    id "michael-stummvoll"
+                                    name "Michael Stummvoll"
+                                    email "michael.stummvoll@staffbase.com"
                                 }
                         ]
                     }

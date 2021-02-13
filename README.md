@@ -138,6 +138,12 @@ Unit tests are located under the `src/test` directory, and can be run with the G
 
 License
 -------
+This is fork from the [BetterCloud/scim2](https://github.com/pingidentity/scim2) Project.
+
+Original license Text below. Staffbase Contributions are licensed under the MIT License (MIT).
+
+--
+
 The BetterCloud SCIM 2.0 SDK contains code branched from the [Ping Identity SCIM 2.0 SDK](https://github.com/pingidentity/scim2).
 
 The UnboundID SCIM2 SDK is available under three licenses: the GNU General Public License version 2 (GPLv2), the GNU Lesser General Public License version 2.1 (LGPLv2.1), and a free-right-to-use license created by UnboundID Corp. See the [LICENSE](https://github.com/BetterCloud/scim2/blob/master/resource/LICENSE.txt) file for more info. 
