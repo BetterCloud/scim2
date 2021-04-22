@@ -9,7 +9,8 @@ jobs:
     - uses: actions/checkout@v1
     - name: deploy
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUBLISH_URL: https://maven.pkg.github.com/${{ github.repository }}
+        PUBLISH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
       run: |
         ./gradlew build
         # Dirty Workaround for some issues with the github registry.
@@ -19,6 +20,4 @@ jobs:
         # 
         # More infos:
         # https://github.community/t5/GitHub-API-Development-and/GitHub-Package-Registry-NuGet-400-Bad-Request/td-p/29391
-        ./gradlew --continue uploadArchives || true
-        ./gradlew --continue uploadArchives || true
-        ./gradlew --continue uploadArchives || true
+        ./gradlew --continue publish

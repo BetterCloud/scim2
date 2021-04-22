@@ -8,25 +8,8 @@ version gitVersion()
 
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
-if (!hasProperty("ossrhUsername")) {
-    ext.ossrhUsername = ""
-}
-if (!hasProperty("ossrhPassword")) {
-    ext.ossrhPassword = ""
-}
-if (!hasProperty("nexusUrl")) {
-    ext.nexusUrl = ""
-}
-if (!hasProperty("nexusUsername")) {
-    ext.nexusUsername = ""
-}
-if (!hasProperty("nexusPassword")) {
-    ext.nexusPassword = ""
-}
-
 allprojects {
     apply plugin: "io.spring.dependency-management"
-    apply plugin: "maven"
     apply plugin: "java-library"
 
     sourceCompatibility = JavaVersion.VERSION_1_8
@@ -45,7 +28,7 @@ allprojects {
 }
 
 subprojects {
-    apply plugin: "signing"
+    apply plugin: "maven-publish"
 
     group = rootProject.group
     archivesBaseName = project.name
@@ -54,8 +37,8 @@ subprojects {
     dependencies {
         implementation group: "com.google.guava", name: "guava", version: "$guava_version"
 
-        compileOnly group: "org.projectlombok", name: "lombok"
-        annotationProcessor group: "org.projectlombok", name: "lombok"
+        compileOnly group: "org.projectlombok", name: "lombok", version: "1.18.20"
+        annotationProcessor group: "org.projectlombok", name: "lombok", version: "1.18.20"
 
         testImplementation "junit:junit"
     }
@@ -74,66 +57,33 @@ subprojects {
         archives javadocJar, sourcesJar
     }
 
-    signing {
-        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
-        sign configurations.archives
+    java {
+        withSourcesJar()
+        withJavadocJar()
     }
 
-    uploadArchives {
+    publishing {
         repositories {
-            mavenDeployer {
-                repository(url: "https://maven.pkg.github.com/${System.env.GITHUB_REPOSITORY}") {
-                    authentication(userName:  "${System.env.GITHUB_ACTOR}", password:  "${System.env.GITHUB_TOKEN}")
-                }
+            maven {
+                name = "GitHubPackages"
 
-                snapshotRepository(url: nexusUrl) {
-                    authentication(userName: nexusUsername, password: nexusPassword)
-                }
-
-                pom.project {
-                    name "SCIM 2.0 SDK for Spring"
-                    packaging "jar"
-                    description "SCIM 2.0 SDK for Spring"
-                    url "https://github.com/Staffbase/scim2"
-
-                    scm {
-                        connection "https://github.com/Staffbase/scim2.git"
-                        developerConnection "https://github.com/Staffbase/scim2.git"
-                        url "https://github.com/Staffbase/scim2"
-                    }
-
-                    licenses {
-                        license {
-                            name "MIT"
-                            url "https://github.com/Staffbase/scim2/blob/master/README.md"
-                        }
-                    }
-
-                    developers {
-                        [
-                                developer {
-                                    id "daniel-lynch"
-                                    name "Daniel Lynch"
-                                    email "dantlynch@gmail.com"
-				},
-                                developer {
-                                    id "michael-stummvoll"
-                                    name "Michael Stummvoll"
-                                    email "michael.stummvoll@staffbase.com"
-                                }
-                        ]
+                if (System.getenv("PUBLISH_URL")) {
+                    url = uri(System.getenv("PUBLISH_URL"))
+                    credentials {
+                        username = System.getenv("PUBLISH_USERNAME") ?: ""
+                        password = System.getenv("PUBLISH_PASSWORD") ?: ""
                     }
                 }
+            }
+        }
+        publications {
+            gpr(MavenPublication) {
+                from(components.java)
             }
         }
     }
 }
 
-uploadArchives {
-    dependsOn = subprojects.uploadArchives
-    enabled = false
-}
-
 wrapper {
-    gradleVersion = '5.2.1'
+    gradleVersion = '7.0'
 }
