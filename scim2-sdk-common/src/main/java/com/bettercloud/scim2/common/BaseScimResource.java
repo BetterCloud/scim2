@@ -17,6 +17,8 @@
 
 package com.bettercloud.scim2.common;
 
+import com.bettercloud.scim2.common.annotations.Attribute;
+import com.bettercloud.scim2.common.types.AttributeDefinition;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -71,10 +73,22 @@ public abstract class BaseScimResource implements ScimResource, Serializable {
 
   private static final long serialVersionUID = 7616682840981516746L;
 
+  @Attribute(description = "A unique identifier for a SCIM resource as defined by the service provider",
+          mutability = AttributeDefinition.Mutability.READ_ONLY,
+          returned = AttributeDefinition.Returned.ALWAYS,
+          uniqueness = AttributeDefinition.Uniqueness.SERVER)
   private String id;
 
+  @Attribute(description = "A String that is an identifier for the resource as defined by the provisioning client.",
+          mutability = AttributeDefinition.Mutability.READ_WRITE,
+          returned = AttributeDefinition.Returned.DEFAULT,
+          uniqueness = AttributeDefinition.Uniqueness.NONE)
   private String externalId;
 
+  @Attribute(description = "A complex attribute containing resource metadata.",
+          mutability = AttributeDefinition.Mutability.READ_ONLY,
+          returned = AttributeDefinition.Returned.DEFAULT,
+          uniqueness = AttributeDefinition.Uniqueness.NONE)
   private Meta meta;
 
   @JsonProperty("schemas")
