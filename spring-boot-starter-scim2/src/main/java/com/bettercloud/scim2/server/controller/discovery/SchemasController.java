@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -59,18 +60,19 @@ public class SchemasController extends SchemaAwareController {
         super(scim2Properties, resourceDefinitions);
     }
 
-    @Override
-    protected List<GenericScimResource> getResources(final Set<ResourceTypeDefinition> resourceDefinitions) {
-        return resourceDefinitions.stream()
-                                  .filter(ResourceTypeDefinition::isDiscoverable)
-                                  .map(resourceTypeDefinition -> {
-                                      if (resourceTypeDefinition.getCoreSchema() != null) {
-                                          return Collections.singletonList(resourceTypeDefinition.getCoreSchema());
-                                      }
-                                      return resourceTypeDefinition.getSchemaExtensions().keySet();
-                                  })
-                                  .flatMap(Collection::stream)
-                                  .map(SchemaResource::asGenericScimResource)
-                                  .collect(Collectors.toList());
-    }
+  @Override
+  protected List<GenericScimResource> getResources(final Set<ResourceTypeDefinition> resourceDefinitions) {
+    return resourceDefinitions.stream()
+        .filter(ResourceTypeDefinition::isDiscoverable)
+        .map(resourceTypeDefinition -> {
+          ArrayList<SchemaResource> ret = new ArrayList<>(resourceTypeDefinition.getSchemaExtensions().keySet());
+          if (resourceTypeDefinition.getCoreSchema() != null) {
+            ret.add(resourceTypeDefinition.getCoreSchema());
+          }
+          return ret;
+        })
+        .flatMap(Collection::stream)
+        .map(SchemaResource::asGenericScimResource)
+        .collect(Collectors.toList());
+  }
 }
