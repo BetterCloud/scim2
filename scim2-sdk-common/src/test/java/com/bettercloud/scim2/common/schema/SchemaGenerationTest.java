@@ -27,12 +27,7 @@ import com.bettercloud.scim2.common.utils.SchemaUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Tests cases for SCIM schema generation.
@@ -383,6 +378,11 @@ public class SchemaGenerationTest
   private void markAttributeFound(List<String> expectedAttributes,
                                   AttributeDefinition attribute)
   {
+    List<String> ignoreAttributes = Arrays.asList("externalId", "id", "meta");
+    if(ignoreAttributes.contains(attribute.getName())) {
+      return;
+    }
+
     if(expectedAttributes.contains(attribute.getName()))
     {
       expectedAttributes.remove(attribute.getName());
