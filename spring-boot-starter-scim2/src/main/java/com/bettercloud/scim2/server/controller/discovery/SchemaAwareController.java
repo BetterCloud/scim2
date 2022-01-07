@@ -28,13 +28,13 @@ public abstract class SchemaAwareController extends BaseResourceController<Gener
 
     protected abstract List<GenericScimResource> getResources(final Set<ResourceTypeDefinition> resourceDefinitions);
 
-    protected ResourceTypeRegistry resourceDefinitions;
+    protected ResourceTypeRegistry resourceTypeRegistry;
 
     @Autowired
     public SchemaAwareController(final Scim2Properties scim2Properties,
-                                 final ResourceTypeRegistry resourceDefinitions) {
+                                 final ResourceTypeRegistry resourceTypeRegistry) {
         super(scim2Properties);
-        this.resourceDefinitions = resourceDefinitions;
+        this.resourceTypeRegistry = resourceTypeRegistry;
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class SchemaAwareController extends BaseResourceController<Gener
             @RequestParam(value = ApiConstants.QUERY_PARAMETER_FILTER, required = false) final String filterString) throws ScimException {
 
         final List<GenericScimResource> filteredResources = StringUtils.isEmpty(filterString)
-                                                            ? getResources(resourceDefinitions.getResourceTypeDefinitions())
+                                                            ? getResources(resourceTypeRegistry.getResourceTypeDefinitions())
                                                             : filterResources(Filter.fromString(filterString));
         final List<GenericScimResource> preparedResources = genericScimResourceConverter.convert(null, null, filteredResources);
 
@@ -75,7 +75,7 @@ public abstract class SchemaAwareController extends BaseResourceController<Gener
     }
 
     private List<GenericScimResource> filterResources(final Filter filter) {
-        return getResources(resourceDefinitions.getResourceTypeDefinitions()).stream().filter(genericScimResource -> {
+        return getResources(resourceTypeRegistry.getResourceTypeDefinitions()).stream().filter(genericScimResource -> {
             try {
                 return filter.visit(filterEvaluator, genericScimResource.getObjectNode());
             } catch (ScimException e) {

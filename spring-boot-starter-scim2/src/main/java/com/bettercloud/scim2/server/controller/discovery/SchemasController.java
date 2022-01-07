@@ -57,8 +57,8 @@ import java.util.stream.Collectors;
 public class SchemasController extends SchemaAwareController {
 
     @Autowired
-    public SchemasController(final Scim2Properties scim2Properties, final ResourceTypeRegistry resourceDefinitions) {
-        super(scim2Properties, resourceDefinitions);
+    public SchemasController(final Scim2Properties scim2Properties, final ResourceTypeRegistry resourceTypeRegistry) {
+        super(scim2Properties, resourceTypeRegistry);
     }
 
   @Override

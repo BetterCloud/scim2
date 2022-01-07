@@ -78,8 +78,8 @@ import java.util.stream.Collectors;
 public class ResourceTypesController extends SchemaAwareController {
 
     @Autowired
-    public ResourceTypesController(final Scim2Properties scim2Properties, final ResourceTypeRegistry resourceDefinitions) {
-        super(scim2Properties, resourceDefinitions);
+    public ResourceTypesController(final Scim2Properties scim2Properties, final ResourceTypeRegistry resourceTypeRegistry) {
+        super(scim2Properties, resourceTypeRegistry);
     }
 
     /**
