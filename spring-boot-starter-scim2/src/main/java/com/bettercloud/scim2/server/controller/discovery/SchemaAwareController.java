@@ -6,6 +6,7 @@ import com.bettercloud.scim2.server.ResourceTypeDefinition;
 import com.bettercloud.scim2.server.config.Scim2Properties;
 import com.bettercloud.scim2.server.controller.BaseResourceController;
 import com.bettercloud.scim2.server.evaluator.SchemaAwareFilterEvaluator;
+import com.bettercloud.scim2.server.resourcetypes.ResourceTypeRegistry;
 import com.google.common.base.Throwables;
 import com.bettercloud.scim2.common.GenericScimResource;
 import com.bettercloud.scim2.common.ScimResource;
@@ -23,21 +24,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class SchemaAwareController extends BaseResourceController<GenericScimResource> {
-
-    private List<GenericScimResource> resources;
-
     private final SchemaAwareFilterEvaluator filterEvaluator = new SchemaAwareFilterEvaluator(resourceTypeDefinition);
 
     protected abstract List<GenericScimResource> getResources(final Set<ResourceTypeDefinition> resourceDefinitions);
 
-    protected Set<ResourceTypeDefinition> resourceDefinitions;
+    protected ResourceTypeRegistry resourceTypeRegistry;
 
     @Autowired
     public SchemaAwareController(final Scim2Properties scim2Properties,
-                                 final Set<ResourceTypeDefinition> resourceDefinitions) {
+                                 final ResourceTypeRegistry resourceTypeRegistry) {
         super(scim2Properties);
-        this.resourceDefinitions = resourceDefinitions;
-        resources = getResources(resourceDefinitions);
+        this.resourceTypeRegistry = resourceTypeRegistry;
     }
 
     /**
@@ -55,7 +52,7 @@ public abstract class SchemaAwareController extends BaseResourceController<Gener
             @RequestParam(value = ApiConstants.QUERY_PARAMETER_FILTER, required = false) final String filterString) throws ScimException {
 
         final List<GenericScimResource> filteredResources = StringUtils.isEmpty(filterString)
-                                                            ? resources
+                                                            ? getResources(resourceTypeRegistry.getResourceTypeDefinitions())
                                                             : filterResources(Filter.fromString(filterString));
         final List<GenericScimResource> preparedResources = genericScimResourceConverter.convert(null, null, filteredResources);
 
@@ -78,7 +75,7 @@ public abstract class SchemaAwareController extends BaseResourceController<Gener
     }
 
     private List<GenericScimResource> filterResources(final Filter filter) {
-        return resources.stream().filter(genericScimResource -> {
+        return getResources(resourceTypeRegistry.getResourceTypeDefinitions()).stream().filter(genericScimResource -> {
             try {
                 return filter.visit(filterEvaluator, genericScimResource.getObjectNode());
             } catch (ScimException e) {

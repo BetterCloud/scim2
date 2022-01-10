@@ -3,8 +3,11 @@ package com.bettercloud.scim2.server.config;
 
 import com.bettercloud.scim2.server.ResourceTypeDefinition;
 import com.bettercloud.scim2.server.annotation.ScimResource;
+import com.bettercloud.scim2.server.resourcetypes.ResourceTypeRegistry;
+import com.bettercloud.scim2.server.resourcetypes.SimpleResourceTypeRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +24,13 @@ import java.util.Set;
  */
 @Configuration
 @Slf4j
-public class ResourceTypeRegistry {
+public class ResourceTypeRegistryConfig {
+
+    @Bean
+    @ConditionalOnMissingBean(ResourceTypeRegistry.class)
+    public ResourceTypeRegistry resourceTypeRegistry(final Set<ResourceTypeDefinition> definitions) {
+        return new SimpleResourceTypeRegistry(definitions);
+    }
 
     @Bean
     public Set<ResourceTypeDefinition> getResourceDefinitions(final Scim2Properties scim2Properties) throws ClassNotFoundException {

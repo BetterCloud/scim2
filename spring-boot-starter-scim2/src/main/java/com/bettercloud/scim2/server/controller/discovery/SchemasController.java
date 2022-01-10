@@ -6,6 +6,7 @@ import com.bettercloud.scim2.common.utils.ApiConstants;
 import com.bettercloud.scim2.server.ResourceTypeDefinition;
 import com.bettercloud.scim2.server.annotation.ScimResource;
 import com.bettercloud.scim2.server.config.Scim2Properties;
+import com.bettercloud.scim2.server.resourcetypes.ResourceTypeRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,8 +57,8 @@ import java.util.stream.Collectors;
 public class SchemasController extends SchemaAwareController {
 
     @Autowired
-    public SchemasController(final Scim2Properties scim2Properties, final Set<ResourceTypeDefinition> resourceDefinitions) {
-        super(scim2Properties, resourceDefinitions);
+    public SchemasController(final Scim2Properties scim2Properties, final ResourceTypeRegistry resourceTypeRegistry) {
+        super(scim2Properties, resourceTypeRegistry);
     }
 
   @Override
