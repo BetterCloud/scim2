@@ -154,12 +154,12 @@ public class GenericScimResourceConverter<RESOURCE extends ScimResource> {
     }
 
     private URI getBaseUri() {
-        return UriComponentsBuilder.fromHttpUrl(baseUrl).pathSegment(getCurrentRequest().getContextPath()).build().toUri();
+        return UriComponentsBuilder.fromHttpUrl(baseUrl).path(getCurrentRequest().getContextPath()).build().toUri();
     }
 
     private URI getLocationUri() {
         final HttpServletRequest request = getCurrentRequest();
-        return UriComponentsBuilder.fromHttpUrl(baseUrl).pathSegment(request.getContextPath()).pathSegment(request.getServletPath()).build().toUri();
+        return UriComponentsBuilder.fromHttpUrl(baseUrl).path(request.getContextPath()).path(request.getServletPath()).build().toUri();
     }
 
     private HttpServletRequest getCurrentRequest() {
