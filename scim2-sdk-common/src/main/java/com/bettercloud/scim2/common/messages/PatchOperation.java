@@ -395,7 +395,10 @@ public abstract class PatchOperation
   @JsonIgnore
   public JsonNode getJsonNode()
   {
-    return value.deepCopy();
+    if(value == null)
+      return null;
+    else
+      return value.deepCopy();
   }
 
   /**
@@ -415,6 +418,11 @@ public abstract class PatchOperation
   public <T> T getValue(final Class<T> cls)
       throws JsonProcessingException, ScimException, IllegalArgumentException
   {
+    if(value == null)
+    {
+      return null;
+    }
+
     if(value.isArray())
     {
       throw new IllegalArgumentException("Patch operation contains " +
