@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Pod
+spec:
+  imagePullSecrets:
+  - name: talend-registry
+  containers:
+  - name: talend-tsbi-springboot-builder
+    image: artifactory.datapwn.com/tlnd-docker-prod/talend/common/tsbi/jdk8-svc-builder:2.9.9-20211214133056
+    resources:
+      requests:
+        memory: "2G"
+        cpu: "2"
+      limits:
+        memory: "6G"
+        cpu: "3"
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - name: docker
+      mountPath: /var/run/docker.sock
+    - name: efs-jenkins-tpsvc-maven
+      mountPath: /root/.m2/repository
+    - name: efs-jenkins-tpsvc-gradle
+      mountPath: /root/.gradle/cache
+  volumes:
+  - name: docker
+    hostPath:
+      path: /var/run/docker.sock
+  - name: efs-jenkins-tpsvc-maven
+    persistentVolumeClaim:
+      claimName: efs-jenkins-tpsvc-m2
+  - name: efs-jenkins-tpsvc-gradle
+    persistentVolumeClaim:
+      claimName: efs-jenkins-tpsvc-gradle
