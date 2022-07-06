@@ -128,6 +128,7 @@ pipeline {
             BUILD_OPTS = "-Preckon.stage=final -Preckon.scope=${RECKON_SCOPE} ${BUILD_OPTS}"
           }
           sh '''
+             git config --global --add safe.directory \$(pwd)
              set +x
              echo https://$GIT_CREDS_USR:$GIT_CREDS_PSW@github.com > /tmp/.git-credentials
              git checkout $BRANCH_NAME
