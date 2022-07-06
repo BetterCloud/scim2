@@ -1,135 +1,80 @@
-plugins {
-    id "io.spring.dependency-management" version "1.0.6.RELEASE" apply false
-}
-
-group "com.bettercloud"
-version "1.0.0"
-
-ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
-
-if (!hasProperty("ossrhUsername")) {
-    ext.ossrhUsername = ""
-}
-if (!hasProperty("ossrhPassword")) {
-    ext.ossrhPassword = ""
-}
-if (!hasProperty("nexusUrl")) {
-    ext.nexusUrl = ""
-}
-if (!hasProperty("nexusUsername")) {
-    ext.nexusUsername = ""
-}
-if (!hasProperty("nexusPassword")) {
-    ext.nexusPassword = ""
-}
-
-allprojects {
-    apply plugin: "io.spring.dependency-management"
-    apply plugin: "maven"
-    apply plugin: "java-library"
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
+buildscript {
     repositories {
-        jcenter()
-        mavenCentral()
+        gradlePluginPortal()
     }
 
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.boot:spring-boot-dependencies:2.1.3.RELEASE"
+    configurations.all {
+        resolutionStrategy {
+            cacheDynamicVersionsFor 0, 'seconds'
         }
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+        classpath "gradle.plugin.com.github.spotbugs.snom:spotbugs-gradle-plugin:$spotbugsPluginVersion"
+
+        // workaround for reckon issue with Java 8
+        classpath "org.ajoberstar.grgit:grgit-gradle:$grgitVersion"
+    }
+}
+
+plugins {
+    id "org.sonarqube" version "$sonarqubePluginVersion"
+    id "org.ajoberstar.reckon" version "$reckonVersion"
+}
+
+reckon {
+    scopeFromProp()
+    snapshotFromProp()
+}
+
+if (!hasProperty('buildTimestamp')) {
+    ext.buildTimestamp = new Date().format('yyyyMMddHHmmss', TimeZone.getTimeZone('UTC'))
+}
+
+configurations.all {
+    resolutionStrategy {
+        cacheDynamicVersionsFor 0, 'seconds'
     }
 }
 
 subprojects {
-    apply plugin: "signing"
+    group = "org.talend"
 
-    group = rootProject.group
-    archivesBaseName = project.name
-    version = rootProject.version
+    apply from: rootProject.file('config/java.gradle')
+    apply from: rootProject.file('config/publish.gradle')
 
-    dependencies {
-        implementation group: "com.google.guava", name: "guava", version: "$guava_version"
+    apply from: rootProject.file('dependencies.gradle')
 
-        compileOnly group: "org.projectlombok", name: "lombok"
-        annotationProcessor group: "org.projectlombok", name: "lombok"
+    repositories {
+        mavenCentral()
 
-        testImplementation "junit:junit"
-    }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        archiveClassifier.set("javadoc")
-        from javadoc
-    }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        archiveClassifier.set("sources")
-        from sourceSets.main.allSource
-    }
-
-    artifacts {
-        archives javadocJar, sourcesJar
-    }
-
-    signing {
-        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
-        sign configurations.archives
-    }
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-
-                snapshotRepository(url: nexusUrl) {
-                    authentication(userName: nexusUsername, password: nexusPassword)
-                }
-
-                pom.project {
-                    name "SCIM 2.0 SDK for Spring"
-                    packaging "jar"
-                    description "SCIM 2.0 SDK for Spring"
-                    url "https://github.com/BetterCloud/scim2"
-
-                    scm {
-                        connection "https://github.com/BetterCloud/scim2.git"
-                        developerConnection "https://github.com/BetterCloud/scim2.git"
-                        url "https://github.com/BetterCloud/scim2"
-                    }
-
-                    licenses {
-                        license {
-                            name "MIT"
-                            url "https://github.com/BetterCloud/scim2/blob/master/README.md"
-                        }
-                    }
-
-                    developers {
-                        [
-                                developer {
-                                    id "daniel-lynch"
-                                    name "Daniel Lynch"
-                                    email "dantlynch@gmail.com"
-                                }
-                        ]
-                    }
-                }
+        maven {
+            url 'https://artifacts-zl.talend.com/nexus/content/repositories/tpsvc'
+            credentials {
+                username nexusTpsvcUsername
+                password nexusTpsvcPassword
             }
         }
+
+        maven {
+            url 'https://artifacts-zl.talend.com/nexus/content/repositories/releases/'
+            credentials {
+                username nexusTalendReleasesUsername
+                password nexusTalendReleasesPassword
+            }
+        }
+
+        maven {
+            url 'https://artifacts-zl.talend.com/nexus/content/repositories/snapshots/'
+            credentials {
+                username nexusTalendSnapshotsUsername
+                password nexusTalendSnapshotsPassword
+            }
+        }
+
+        maven {
+            url 'https://artifacts-zl.talend.com/nexus/content/groups/public'
+        }
     }
-}
-
-uploadArchives {
-    dependsOn = subprojects.uploadArchives
-    enabled = false
-}
-
-wrapper {
-    gradleVersion = '5.2.1'
 }

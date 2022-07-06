@@ -1,0 +1,38 @@
+apply plugin: 'maven-publish'
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    repositories {
+        if (project.hasProperty('nexusTpsvcDeployUsername')) {
+            maven {
+                credentials {
+                    username nexusTpsvcDeployUsername
+                    password nexusTpsvcDeployPassword
+                }
+                url project.getVersion().toString().contains('SNAPSHOT') ? nexusTalendSnapshotsUrl : nexusTpsvcUrl
+            }
+        } else {
+            mavenLocal()
+        }
+    }
+
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId archivesBaseName
+
+            from components.java
+
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+        }
+    }
+}

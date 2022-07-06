@@ -1,0 +1,82 @@
+apply plugin: 'java'
+apply plugin: 'checkstyle'
+apply plugin: 'com.github.spotbugs'
+apply plugin: 'pmd'
+apply plugin: 'jacoco'
+apply plugin: 'eclipse'
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    options.encoding = 'UTF-8'
+}
+
+compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+    options.encoding = 'UTF-8'
+}
+
+checkstyle {
+    configProperties.checkstyleSuppressionsFile = rootProject.file('config/checkstyle/checkstyle-suppressions.xml')
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+    reportsDir = file("$project.buildDir/reports/checkstyle")
+    toolVersion = "$checkstyleVersion"
+}
+
+spotbugs {
+    reportsDir = file("$project.buildDir/reports/spotbugs")
+    excludeFilter = rootProject.file("config/spotbugs/spotbugs-exclude.xml")
+    toolVersion = "$spotbugsVersion"
+    showStackTraces = false
+}
+
+spotbugsTest {
+    enabled = false
+}
+
+// spotbugs task for a custom source set is generated dynamically
+// so we need this trick to get access to it from here
+tasks.named('compileJava').configure {
+    doLast {
+        tasks.findByName('spotbugsIntegrationTest')?.configure {
+            ignoreFailures = true
+        }
+    }
+}
+
+pmd {
+    sourceSets = [sourceSets.main]
+    reportsDir = file("$project.buildDir/reports/pmd")
+    ruleSetFiles = rootProject.files('config/pmd/pmd-ruleset.xml')
+    ruleSets = []
+    toolVersion = "$pmdVersion"
+}
+
+tasks.withType(Test) {
+    reports.html.destination = file("${reporting.baseDir}-${name}/${name}")
+    reports.junitXml.destination = file("${reporting.baseDir}-${name}/${name}")
+    minHeapSize = "1g"
+    maxHeapSize = "3g"
+    jvmArgs '-XX:MaxMetaspaceSize=1g'
+}
+
+jacoco {
+    toolVersion = "$jacocoVersion"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+
+eclipse {
+    if (project != rootProject) {
+        eclipse.project.name = rootProject.name + '-' + project.name
+    }
+}
+
+test.testLogging.exceptionFormat = 'full'
+test.finalizedBy jacocoTestReport

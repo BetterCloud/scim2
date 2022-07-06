@@ -1,0 +1,23 @@
+apply plugin: 'io.spring.dependency-management'
+
+configurations.all {
+    exclude group: "log4j", module: "log4j"
+    exclude group: "org.apache.logging.log4j"
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.talend.tsbi.java.springboot-bom:$tsbiBomVersion"
+    }
+
+    dependencies {
+        dependency "com.google.guava:guava:$guava_version"
+        dependency "org.testng:testng:$testng_version"
+    }
+
+    imports {
+        // security-bom should always be declared last
+        mavenBom "org.talend.pscommons:security-bom:$securityBomVersion"
+    }
+}
