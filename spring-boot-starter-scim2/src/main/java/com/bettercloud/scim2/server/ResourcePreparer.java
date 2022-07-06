@@ -169,7 +169,8 @@ public class ResourcePreparer<T extends ScimResource> {
 
         if (meta.getLocation() == null) {
             String id = returnedResource.getId();
-            if (id != null) {
+            // Check if the baseUri already contains the id.
+            if (id != null && !baseUri.getPath().contains(id)) {
                 UriComponentsBuilder builder = UriComponentsBuilder.fromUri(baseUri);
                 builder.path("/");
                 builder.path(id);

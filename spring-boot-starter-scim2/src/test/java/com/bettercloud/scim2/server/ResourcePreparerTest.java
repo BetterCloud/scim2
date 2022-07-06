@@ -31,14 +31,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -582,5 +579,18 @@ public class ResourcePreparerTest {
 
         prepared = preparer.trimRetrievedResource(new GenericScimResource(node));
         assertFalse(prepared.getObjectNode().has("urn:ext:1"));
+    }
+
+    /**
+     * Test that resource id is not duplicate in the meta location
+     *
+     * @throws Exception If an error occurs.
+     */
+    @Test
+    public void testLocationDuplicateId() throws Exception {
+        URI baseUri = UriComponentsBuilder.fromUri(testBaseUri).path("/").path(testResource.getId()).build().toUri();
+        ResourcePreparer<ScimResource> preparer = new ResourcePreparer<>(resourceTypeDefinition, "default", null, baseUri);
+        preparer.setResourceTypeAndLocation(testResource);
+        assertTrue(testResource.getMeta().getLocation().equals(baseUri));
     }
 }
