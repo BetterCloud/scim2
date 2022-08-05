@@ -346,6 +346,70 @@ public class PatchOpTestCase
 
   }
 
+  @Test
+  public void getTestPatchRemoveGroupMemberWithValue() throws IOException, ScimException {
+    PatchRequest patchOp = JsonUtils.getObjectReader().
+        forType(PatchRequest.class).
+        readValue("{" +
+                  "    \"schemas\":[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]," +
+                  "    \"Operations\":[{" +
+                  "       \"value\":[{\"value\":\"user-id-remove\"}]," +
+                  "       \"op\":\"remove\"," +
+                  "       \"path\":\"members\"" +
+                  "    }]" +
+                  "}");
+
+    JsonNode prePatchResource = JsonUtils.getObjectReader().
+        readTree("{" +
+                 "  \"schemas\" : [ \"urn:ietf:params:scim:schemas:core:2.0:Group\" ]," +
+                 "  \"id\" : \"group-id\"," +
+                 "  \"meta\" : {" +
+                 "    \"lastModified\" : \"2022-08-03T13:55:27.761Z\"," +
+                 "    \"resourceType\" : \"Group\"," +
+                 "    \"location\" : \"https://api.int.cloud.talend.com/scim/v2/Groups/group-id\"" +
+                 "  }," +
+                 "  \"displayName\" : \"Group Name\"," +
+                 "  \"members\" : [{" +
+                 "      \"value\" : \"user-id\"," +
+                 "      \"display\" : \"User Name\"," +
+                 "      \"$ref\" : \"https://api.int.cloud.talend.com/scim/v2/Users/user-id\"" +
+                 "    },{" +
+                 "      \"value\" : \"user-id-remove\"," +
+                 "      \"display\" : \"User Remove\"," +
+                 "      \"$ref\" : \"https://api.int.cloud.talend.com/scim/v2/Users/user-id-remove\"" +
+                 "  }]" +
+                 "}");
+
+    JsonNode postPatchResource = JsonUtils.getObjectReader().
+        readTree("{" +
+                 "  \"schemas\" : [ \"urn:ietf:params:scim:schemas:core:2.0:Group\" ]," +
+                 "  \"id\" : \"group-id\"," +
+                 "  \"meta\" : {" +
+                 "    \"lastModified\" : \"2022-08-03T13:55:27.761Z\"," +
+                 "    \"resourceType\" : \"Group\"," +
+                 "    \"location\" : \"https://api.int.cloud.talend.com/scim/v2/Groups/group-id\"" +
+                 "  }," +
+                 "  \"displayName\" : \"Group Name\"," +
+                 "  \"members\" : [{" +
+                 "    \"value\" : \"user-id\"," +
+                 "    \"display\" : \"User Name\"," +
+                 "    \"$ref\" : \"https://api.int.cloud.talend.com/scim/v2/Users/user-id\"" +
+                 "  }]" +
+                 "}");
+
+    GenericScimResource scimResource = new GenericScimResource((ObjectNode) prePatchResource);
+    patchOp.apply(scimResource);
+    assertEquals(scimResource.getObjectNode(), postPatchResource);
+
+    PatchRequest constructed = new PatchRequest(patchOp.getOperations());
+
+    assertEquals(constructed, patchOp);
+
+    String serialized = JsonUtils.getObjectWriter().writeValueAsString(constructed);
+    assertEquals(JsonUtils.getObjectReader().forType(PatchRequest.class).readValue(serialized), constructed);
+
+  }
+
   /**
    * Test bad patch requests.
    *

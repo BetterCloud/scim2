@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * An individual patch operation.
@@ -210,22 +212,41 @@ public abstract class PatchOperation
 
   static final class RemoveOperation extends PatchOperation
   {
+
+    private static final String GROUP_MEMBERS_PATH = "members";
+
     /**
      * Create a new remove patch operation.
      *
      * @param path The path targeted by this patch operation.
      * @throws ScimException If a path is null.
      */
-    @JsonCreator
     private RemoveOperation(
-        @JsonProperty(value = "path", required = true) final Path path)
-        throws ScimException
+            @JsonProperty(value = "path", required = true) final Path path)
+            throws ScimException
     {
       super(path);
       if(path == null)
       {
         throw BadRequestException.noTarget(
+                "path field must not be null for remove operations");
+      }
+    }
+
+    @JsonCreator
+    private RemoveOperation(@JsonProperty(value = "path", required = true) Path path,
+                            @JsonProperty(value = "value") final JsonNode value) throws ScimException {
+      super(path);
+      if(path == null) {
+        throw BadRequestException.noTarget(
             "path field must not be null for remove operations");
+      }
+
+      if (null != value && GROUP_MEMBERS_PATH.equalsIgnoreCase(path.toString())) {
+        path = Path.fromString(StreamSupport.stream(value.spliterator(), false)
+                .map(memberNode -> memberNode.get("value").textValue())
+                .collect(Collectors.joining("\" or value eq \"", GROUP_MEMBERS_PATH + "[value eq \"", "\"]")));
+        this.setPath(path);
       }
     }
 
@@ -418,7 +439,7 @@ public abstract class PatchOperation
     }
   }
 
-  private final Path path;
+  private Path path;
 
   /**
    * Create a new patch operation.
@@ -428,6 +449,10 @@ public abstract class PatchOperation
    */
   PatchOperation(final Path path) throws ScimException
   {
+    this.setPath(path);
+  }
+
+  protected void setPath(Path path) throws ScimException {
     if(path != null)
     {
       if(path.size() > 2)
@@ -1325,6 +1350,18 @@ public abstract class PatchOperation
     }
     catch (ScimException e)
     {
+      throw new IllegalArgumentException(e);
+    }
+  }
+
+  public static PatchOperation remove(final String path, final JsonNode value) throws ScimException {
+    return remove(Path.fromString(path), value);
+  }
+
+  public static PatchOperation remove(final Path path, final JsonNode value) {
+    try {
+      return new RemoveOperation(path, value);
+    } catch (ScimException e) {
       throw new IllegalArgumentException(e);
     }
   }
