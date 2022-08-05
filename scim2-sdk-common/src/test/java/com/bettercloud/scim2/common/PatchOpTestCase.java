@@ -410,6 +410,29 @@ public class PatchOpTestCase
 
   }
 
+  @Test
+  public void getTestPatchWithLowercaseOperations() throws IOException, ScimException {
+    PatchRequest patchOp = JsonUtils.getObjectReader().
+        forType(PatchRequest.class).
+        readValue("{" +
+                  "    \"schemas\":[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]," +
+                  "    \"operations\":[{" +
+                  "       \"value\":[{\"value\":\"user-id-remove\"}]," +
+                  "       \"op\":\"remove\"," +
+                  "       \"path\":\"members\"" +
+                  "    }]" +
+                  "}");
+
+    PatchRequest constructed = new PatchRequest(patchOp.getOperations());
+    String serialized = JsonUtils.getObjectWriter().writeValueAsString(constructed);
+
+    assertEquals(constructed, patchOp);
+    assertEquals(patchOp.getOperations().size(), 1);
+    assertEquals(patchOp.getOperations().iterator().next().getOpType(), PatchOpType.REMOVE);
+    assertEquals(JsonUtils.getObjectReader().forType(PatchRequest.class).readValue(serialized), constructed);
+
+  }
+
   /**
    * Test bad patch requests.
    *

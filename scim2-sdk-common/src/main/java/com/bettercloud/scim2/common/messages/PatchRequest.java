@@ -17,6 +17,7 @@
 
 package com.bettercloud.scim2.common.messages;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.bettercloud.scim2.common.BaseScimResource;
@@ -52,7 +53,7 @@ public final class PatchRequest
    */
   @JsonCreator
   public PatchRequest(
-      @JsonProperty(value = "Operations", required = true)
+      @JsonAlias("operations") @JsonProperty(value = "Operations", required = true)
       final List<PatchOperation> operations)
   {
     this.operations = Collections.unmodifiableList(operations);
