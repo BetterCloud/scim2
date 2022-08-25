@@ -61,6 +61,11 @@ public class PatchOpTestCase
             "  \"Operations\":[  \n" +
             "    {  \n" +
             "      \"op\":\"add\",\n" +
+            "      \"path\":\"addresses[type eq \\\"home\\\"].postalCode\",\n" +
+            "      \"value\":\"91608\"\n" +
+            "    }," +
+            "    {  \n" +
+            "      \"op\":\"add\",\n" +
             "      \"value\":{  \n" +
             "        \"emails\":[  \n" +
             "          {  \n" +
@@ -230,7 +235,6 @@ public class PatchOpTestCase
             "      \"streetAddress\":\"456 Hollywood Blvd\",\n" +
             "      \"locality\":\"Hollywood\",\n" +
             "      \"region\":\"CA\",\n" +
-            "      \"postalCode\":\"91608\",\n" +
             "      \"country\":\"USA\",\n" +
             "      \"formatted\":\"456 Hollywood Blvd\\nHollywood, " +
             "CA 91608 USA\"\n" +
@@ -411,17 +415,40 @@ public class PatchOpTestCase
   }
 
   @Test
-  public void getTestPatchWithLowercaseOperations() throws IOException, ScimException {
+  public void getTestPatchAddWithPathFilter() throws IOException {
     PatchRequest patchOp = JsonUtils.getObjectReader().
         forType(PatchRequest.class).
         readValue("{" +
                   "    \"schemas\":[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]," +
                   "    \"operations\":[{" +
-                  "       \"value\":[{\"value\":\"user-id-remove\"}]," +
-                  "       \"op\":\"remove\"," +
-                  "       \"path\":\"members\"" +
+                  "       \"value\":\"44200\"," +
+                  "       \"op\":\"add\"," +
+                  "       \"path\":\"addresses[type eq \\\"work\\\"].postalCode\"" +
                   "    }]" +
                   "}");
+
+    PatchRequest constructed = new PatchRequest(patchOp.getOperations());
+    String serialized = JsonUtils.getObjectWriter().writeValueAsString(constructed);
+
+    assertEquals(constructed, patchOp);
+    assertEquals(patchOp.getOperations().size(), 1);
+    assertEquals(patchOp.getOperations().iterator().next().getOpType(), PatchOpType.ADD);
+    assertEquals(JsonUtils.getObjectReader().forType(PatchRequest.class).readValue(serialized), constructed);
+
+  }
+
+  @Test
+  public void getTestPatchWithLowercaseOperations() throws IOException, ScimException {
+    PatchRequest patchOp = JsonUtils.getObjectReader().
+            forType(PatchRequest.class).
+            readValue("{" +
+                    "    \"schemas\":[\"urn:ietf:params:scim:api:messages:2.0:PatchOp\"]," +
+                    "    \"operations\":[{" +
+                    "       \"value\":[{\"value\":\"user-id-remove\"}]," +
+                    "       \"op\":\"remove\"," +
+                    "       \"path\":\"members\"" +
+                    "    }]" +
+                    "}");
 
     PatchRequest constructed = new PatchRequest(patchOp.getOperations());
     String serialized = JsonUtils.getObjectWriter().writeValueAsString(constructed);

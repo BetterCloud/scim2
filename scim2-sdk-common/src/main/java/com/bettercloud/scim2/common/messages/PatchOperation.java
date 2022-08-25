@@ -94,18 +94,6 @@ public abstract class PatchOperation
             "value field must be a JSON object containing the attributes to " +
                 "add");
       }
-      if(path != null)
-      {
-        for (Path.Element element : path)
-        {
-          if(element.getValueFilter() != null)
-          {
-            throw BadRequestException.invalidPath(
-                "path field for add operations must not include any value " +
-                    "selection filters");
-          }
-        }
-      }
       this.value = value;
     }
 
