@@ -17,6 +17,7 @@
 
 package com.bettercloud.scim2.common.utils;
 
+import com.bettercloud.scim2.common.filters.FilterType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -242,6 +243,14 @@ public class JsonUtils
               filterArray((ArrayNode)node, valueFilter, false);
           if(arrayNode.size() == 0)
           {
+            // Create missing object only in case of simple filter (eq filter with simple path).
+            // Example: addresses[type eq "home"] will create {"type":"home"} in addresses array.
+            if (valueFilter.getFilterType() == FilterType.EQUAL && valueFilter.getAttributePath().size() == 1) {
+              return ((ArrayNode)node).addObject().set(
+                      valueFilter.getAttributePath().getElement(0).getAttribute(),
+                      valueFilter.getComparisonValue()
+              );
+            }
             throw BadRequestException.noTarget("Attribute " +
                 field + " does not have a value matching the " +
                 "filter " + valueFilter);

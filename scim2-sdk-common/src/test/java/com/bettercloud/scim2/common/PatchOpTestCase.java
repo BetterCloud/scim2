@@ -351,6 +351,83 @@ public class PatchOpTestCase
   }
 
   @Test
+  public void getTestPatchCreateMissingObject() throws IOException, ScimException
+  {
+    PatchRequest patchOp = JsonUtils.getObjectReader().
+            forType(PatchRequest.class).
+            readValue("{  \n" +
+                    "  \"schemas\":[  \n" +
+                    "    \"urn:ietf:params:scim:api:messages:2.0:PatchOp\"\n" +
+                    "  ],\n" +
+                    "  \"Operations\":[  \n" +
+                    "    {  \n" +
+                    "      \"op\":\"add\",\n" +
+                    "      \"path\":\"addresses[type eq \\\"home\\\"].postalCode\",\n" +
+                    "      \"value\":\"44000\"\n" +
+                    "    }," +
+                    "    {  \n" +
+                    "      \"op\":\"add\",\n" +
+                    "      \"path\":\"addresses[type eq \\\"home\\\"].locality\",\n" +
+                    "      \"value\":\"Nantes\"\n" +
+                    "    }," +
+                    "    {  \n" +
+                    "      \"op\":\"add\",\n" +
+                    "      \"path\":\"phoneNumbers[type eq \\\"mobile\\\"].value\",\n" +
+                    "      \"value\":\"+0000000000\"\n" +
+                    "    }" +
+                    "  ]\n" +
+                    "}");
+
+    JsonNode prePatchResource = JsonUtils.getObjectReader().
+            readTree("{  \n" +
+                    "  \"schemas\":[  \n" +
+                    "    \"urn:ietf:params:scim:schemas:core:2.0:User\"\n" +
+                    "  ],\n" +
+                    "  \"id\":\"2819c223-7f76-453a-919d-413861904646\",\n" +
+                    "  \"userName\":\"bjensen@example.com\",\n" +
+                    "  \"addresses\":[],\n" +
+                    "  \"phoneNumbers\":[]\n" +
+                    "}");
+
+    JsonNode postPatchResource = JsonUtils.getObjectReader().
+            readTree("{  \n" +
+                    "  \"schemas\":[  \n" +
+                    "    \"urn:ietf:params:scim:schemas:core:2.0:User\"\n" +
+                    "  ],\n" +
+                    "  \"id\":\"2819c223-7f76-453a-919d-413861904646\",\n" +
+                    "  \"userName\":\"bjensen@example.com\",\n" +
+                    "  \"addresses\":[  \n" +
+                    "    {  \n" +
+                    "      \"type\":\"home\",\n" +
+                    "      \"postalCode\":\"44000\",\n" +
+                    "      \"locality\":\"Nantes\"\n" +
+                    "    }\n" +
+                    "  ],\n" +
+                    "  \"phoneNumbers\":[  \n" +
+                    "    {  \n" +
+                    "      \"type\":\"mobile\",\n" +
+                    "      \"value\":\"+0000000000\"\n" +
+                    "    }\n" +
+                    "  ]\n" +
+                    "}");
+
+    GenericScimResource scimResource =
+            new GenericScimResource((ObjectNode)prePatchResource);
+    patchOp.apply(scimResource);
+    assertEquals(scimResource.getObjectNode(), postPatchResource);
+
+    PatchRequest constructed = new PatchRequest(patchOp.getOperations());
+
+    assertEquals(constructed, patchOp);
+
+    String serialized = JsonUtils.getObjectWriter().
+            writeValueAsString(constructed);
+    assertEquals(JsonUtils.getObjectReader().forType(PatchRequest.class).
+            readValue(serialized), constructed);
+
+  }
+
+  @Test
   public void getTestPatchRemoveGroupMemberWithValue() throws IOException, ScimException {
     PatchRequest patchOp = JsonUtils.getObjectReader().
         forType(PatchRequest.class).
