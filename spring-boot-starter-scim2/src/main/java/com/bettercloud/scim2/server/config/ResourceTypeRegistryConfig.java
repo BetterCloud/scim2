@@ -1,7 +1,9 @@
 package com.bettercloud.scim2.server.config;
 
 
+import com.bettercloud.scim2.server.BaseUrlProvider;
 import com.bettercloud.scim2.server.ResourceTypeDefinition;
+import com.bettercloud.scim2.server.StaticBaseUrlProvider;
 import com.bettercloud.scim2.server.annotation.ScimResource;
 import com.bettercloud.scim2.server.resourcetypes.ResourceTypeRegistry;
 import com.bettercloud.scim2.server.resourcetypes.SimpleResourceTypeRegistry;
@@ -25,6 +27,13 @@ import java.util.Set;
 @Configuration
 @Slf4j
 public class ResourceTypeRegistryConfig {
+
+    @Bean
+    @ConditionalOnMissingBean(BaseUrlProvider.class)
+    public BaseUrlProvider baseUrlProvider(final Scim2Properties scim2Properties) {
+        return new StaticBaseUrlProvider(scim2Properties.getBaseUrl());
+    }
+
 
     @Bean
     @ConditionalOnMissingBean(ResourceTypeRegistry.class)

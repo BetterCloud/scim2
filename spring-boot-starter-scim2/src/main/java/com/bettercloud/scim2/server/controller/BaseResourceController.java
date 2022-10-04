@@ -2,8 +2,8 @@ package com.bettercloud.scim2.server.controller;
 
 import com.bettercloud.scim2.common.ScimResource;
 import com.bettercloud.scim2.common.types.AttributeDefinition;
+import com.bettercloud.scim2.server.BaseUrlProvider;
 import com.bettercloud.scim2.server.ResourceTypeDefinition;
-import com.bettercloud.scim2.server.config.Scim2Properties;
 import com.bettercloud.scim2.server.converter.GenericScimResourceConverter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -19,8 +19,8 @@ public abstract class BaseResourceController<RESOURCE extends ScimResource> {
 
     protected GenericScimResourceConverter<RESOURCE> genericScimResourceConverter;
 
-    public BaseResourceController(final Scim2Properties scim2Properties) {
-        genericScimResourceConverter = new GenericScimResourceConverter<>(resourceTypeDefinition, scim2Properties.getBaseUrl());
+    public BaseResourceController(final BaseUrlProvider baseUrlProvider) {
+        genericScimResourceConverter = new GenericScimResourceConverter<>(resourceTypeDefinition, baseUrlProvider);
     }
 
     protected Set<String> getValidSortPaths() {
