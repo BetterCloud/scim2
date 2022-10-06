@@ -4,6 +4,7 @@ import com.bettercloud.scim2.common.GenericScimResource;
 import com.bettercloud.scim2.common.ScimResource;
 import com.bettercloud.scim2.common.exceptions.BadRequestException;
 import com.bettercloud.scim2.common.types.Meta;
+import com.bettercloud.scim2.server.BaseUrlProvider;
 import com.bettercloud.scim2.server.ResourcePreparer;
 import com.bettercloud.scim2.server.ResourceTypeDefinition;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class GenericScimResourceConverter<RESOURCE extends ScimResource> {
 
     private final ResourceTypeDefinition resourceTypeDefinition;
 
-    private final String baseUrl;
+    private final BaseUrlProvider baseUrlProvider;
 
     /**
      * Convert a resource to a GenericScimResource.
@@ -153,13 +154,28 @@ public class GenericScimResourceConverter<RESOURCE extends ScimResource> {
         return new ResourcePreparer<>(resourceTypeDefinition, attributes, excludedAttributes, getLocationUri());
     }
 
-    private URI getBaseUri() {
-        return UriComponentsBuilder.fromHttpUrl(baseUrl).pathSegment(getCurrentRequest().getContextPath()).build().toUri();
+    private static String stripLeadingSeparator(String contextPath) {
+        if (contextPath.startsWith("/")) {
+            return contextPath.substring(1);
+        }
+        return contextPath;
     }
+
+    private URI getBaseUri() {
+        return UriComponentsBuilder
+                .fromHttpUrl(baseUrlProvider.getBaseUrl())
+                .pathSegment(stripLeadingSeparator(getCurrentRequest().getContextPath()))
+                .build().toUri();
+    }
+
 
     private URI getLocationUri() {
         final HttpServletRequest request = getCurrentRequest();
-        return UriComponentsBuilder.fromHttpUrl(baseUrl).pathSegment(request.getContextPath()).pathSegment(request.getServletPath()).build().toUri();
+        return UriComponentsBuilder
+                .fromHttpUrl(baseUrlProvider.getBaseUrl())
+                .pathSegment(stripLeadingSeparator(request.getContextPath()))
+                .pathSegment(stripLeadingSeparator(request.getServletPath()))
+                .build().toUri();
     }
 
     private HttpServletRequest getCurrentRequest() {

@@ -4,6 +4,7 @@ import com.bettercloud.scim2.common.GenericScimResource;
 import com.bettercloud.scim2.common.exceptions.ScimException;
 import com.bettercloud.scim2.common.types.ServiceProviderConfigResource;
 import com.bettercloud.scim2.common.utils.ApiConstants;
+import com.bettercloud.scim2.server.BaseUrlProvider;
 import com.bettercloud.scim2.server.annotation.ScimResource;
 import com.bettercloud.scim2.server.config.Scim2Properties;
 import com.bettercloud.scim2.server.controller.BaseResourceController;
@@ -42,9 +43,9 @@ public class ServiceProviderConfigController extends BaseResourceController<Serv
     private ServiceProviderConfigResource serviceProviderConfigResource;
 
     @Autowired
-    public ServiceProviderConfigController(final Scim2Properties scim2Properties,
+    public ServiceProviderConfigController(final BaseUrlProvider baseUrlProvider,
                                            final ServiceProviderConfigResource serviceProviderConfigResource) {
-        super(scim2Properties);
+        super(baseUrlProvider);
         this.serviceProviderConfigResource = serviceProviderConfigResource;
     }
 

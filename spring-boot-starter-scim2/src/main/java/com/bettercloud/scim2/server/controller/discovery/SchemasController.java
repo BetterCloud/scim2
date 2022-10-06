@@ -3,6 +3,7 @@ package com.bettercloud.scim2.server.controller.discovery;
 import com.bettercloud.scim2.common.GenericScimResource;
 import com.bettercloud.scim2.common.types.SchemaResource;
 import com.bettercloud.scim2.common.utils.ApiConstants;
+import com.bettercloud.scim2.server.BaseUrlProvider;
 import com.bettercloud.scim2.server.ResourceTypeDefinition;
 import com.bettercloud.scim2.server.annotation.ScimResource;
 import com.bettercloud.scim2.server.config.Scim2Properties;
@@ -57,8 +58,8 @@ import java.util.stream.Collectors;
 public class SchemasController extends SchemaAwareController {
 
     @Autowired
-    public SchemasController(final Scim2Properties scim2Properties, final ResourceTypeRegistry resourceTypeRegistry) {
-        super(scim2Properties, resourceTypeRegistry);
+    public SchemasController(final BaseUrlProvider baseUrlProvider, final ResourceTypeRegistry resourceTypeRegistry) {
+        super(baseUrlProvider, resourceTypeRegistry);
     }
 
   @Override
