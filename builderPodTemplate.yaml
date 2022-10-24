@@ -5,7 +5,7 @@ spec:
     - name: talend-registry
   containers:
     - name: talend-tsbi-springboot-builder
-      image: artifactory.datapwn.com/tlnd-docker-prod/talend/common/tsbi/jdk8-svc-builder:2.10.3-20220629073027
+      image: artifactory.datapwn.com/tlnd-docker-prod/talend/common/tsbi/jdk8-svc-builder:3.1.2-20221024164419
       resources:
         requests:
           memory: "2G"
