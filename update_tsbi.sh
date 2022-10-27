@@ -24,12 +24,12 @@ if [ -z "$nexusReleasesUrl" ]; then
   nexusReleasesUrl="https://artifacts-zl.talend.com/nexus/content/repositories/releases"
 fi
 
-if [ -z "$nexusTpsvcUrl" ]; then
-  nexusTpsvcUrl="https://artifacts-zl.talend.com/nexus/content/repositories/tpsvc"
+if [ -z "$artifactoryUrl" ]; then
+  artifactoryUrl="https://artifactory.datapwn.com/artifactory"
 fi
 
-if [ -z "$artifactoryUrl" ]; then
-  artifactoryUrl="https://artifactory.datapwn.com/artifactory/tlnd-docker-prod"
+if [ -z "$nexusTpsvcUrl" ]; then
+  nexusTpsvcUrl="https://artifacts-zl.talend.com/nexus/content/repositories/tpsvc"
 fi
 
 # exit status 0 means the script has updated the version
@@ -107,22 +107,22 @@ function updateDependencyIfNecessary() {
 #################################################################################################################################
 ### Updating TSBI and Spring-Boot
 
-function getFullCurrentTsbiPomVersion() {
+function getFullCurrentTsbiBomVersion() {
   getVersionFromGradleProperties 'tsbiBomVersion'
 }
 
 function getSpringBootKind() {
-  getFullCurrentTsbiPomVersion | sed 's/:.*//g'
+  getFullCurrentTsbiBomVersion | sed 's/:.*//g'
 }
 
-function getCurrentTsbiPomVersion() {
-  getFullCurrentTsbiPomVersion | sed 's/.*://g'
+function getCurrentTsbiBomVersion() {
+  getFullCurrentTsbiBomVersion | sed 's/.*://g'
 }
 
 # Params
 #   $1 - Nexus Repo
 #   $2 - Spring Boot kind (for example, 2.3)
-function getLatestTsbiPomVersion() {
+function getLatestTsbiBomVersion() {
   getLatestVersionFromNexus "$1" "org/talend/tsbi/java/springboot-bom/$2"
 }
 
@@ -130,51 +130,53 @@ function getLatestTsbiPomVersion() {
 #   $1 - Nexus Repo
 #   $2 - Spring Boot kind (for example, 2.3)
 #   $3 - TSBI POM version
-function getTsbiPom() {
+function getTsbiBom() {
   curl -L -s --netrc-file "$netrcFile" "$1/org/talend/tsbi/java/springboot-bom/$2/$3/$2-$3.pom"
 }
 
-currentTsbiSbKind=$(getSpringBootKind)
-currentTsbiVersion=$(getCurrentTsbiPomVersion)
+#################################################################################################################################
 
-if [ -z "$currentTsbiVersion" ]; then
-  echo "This project doesn't seem to use TSBI POM"
+currentTsbiSbKind=$(getSpringBootKind)
+currentTsbiBomVersion=$(getCurrentTsbiBomVersion)
+
+if [ -z "$currentTsbiBomVersion" ]; then
+  echo "This project doesn't seem to use TSBI BOM"
   exit 1
 fi
 
-latestTsbiVersion=$(getLatestTsbiPomVersion "$nexusReleasesUrl" "$currentTsbiSbKind")
+latestTsbiVersion=$(getLatestTsbiBomVersion "$nexusReleasesUrl" "$currentTsbiSbKind")
 
 if [ -z "$latestTsbiVersion" ]; then
-  echo "Unable to get latest TSBI POM version"
+  echo "Unable to get latest TSBI BOM version"
   exit 2
 fi
 
-echo "Current TSBI POM: $currentTsbiVersion, Latest: $latestTsbiVersion"
+echo "Current TSBI BOM: $currentTsbiBomVersion, Latest: $latestTsbiVersion"
 
-if [ "$currentTsbiVersion" != "$latestTsbiVersion" ]; then
-  echo "Getting latest TSBI POM ..."
+if [ "$currentTsbiBomVersion" != "$latestTsbiVersion" ]; then
+  echo "Getting latest TSBI BOM ..."
 
-  latestTsbiPom=$(getTsbiPom "$nexusReleasesUrl" "$currentTsbiSbKind" "$latestTsbiVersion")
+  latestTsbiBom=$(getTsbiBom "$nexusReleasesUrl" "$currentTsbiSbKind" "$latestTsbiVersion")
 
-  if [ -z "$latestTsbiPom" ]; then
-    echo "Unable to get TSBI POM"
+  if [ -z "$latestTsbiBom" ]; then
+    echo "Unable to get TSBI BOM"
     exit 2
   fi
 
-  latestSpringBootVersion=$(getVersionFromPom "$latestTsbiPom" "spring-boot.version")
+  latestSpringBootVersion=$(getVersionFromPom "$latestTsbiBom" "spring-boot.version")
 
   if [ -z "$latestSpringBootVersion" ]; then
-    echo "Unable to get Spring-Boot version from TSBI POM"
+    echo "Unable to get Spring-Boot version from TSBI BOM"
     exit 2
   fi
 
-  echo "Updating to TSBI $latestTsbiVersion and Spring-Boot $latestSpringBootVersion"
+  echo "Updating to TSBI BOM $latestTsbiVersion and Spring-Boot $latestSpringBootVersion"
 
   updateGradleProperties "tsbiBomVersion" "$currentTsbiSbKind:$latestTsbiVersion"
   updateGradleProperties "springBootVersion" "$latestSpringBootVersion"
 
   exitStatus=0
-  echo "Done updating TSBI and Spring-Boot"
+  echo "Done updating TSBI BOM and Spring-Boot"
 fi
 
 #################################################################################################################################
@@ -194,16 +196,32 @@ function getCurrentTsbiImageVersion() {
 }
 
 # Params
-#   $1 - Artifactory URL
+#   $1 - TSBI image path in artifactory
 function getLatestTsbiImageVersion() {
-  curl -L -s --netrc-file "$netrcFile" "$1/talend/common/tsbi/java11-base" | grep -o "[0-9][0-9.-]*-[0-9][0-9]*" | sort --version-sort | tail -1
+  artifactory_url="${1/artifactory.datapwn.com/${artifactoryUrl}}"
+  curl -L -s --netrc-file "$netrcFile" "$artifactory_url" | grep -o "[0-9][0-9.-]*-[0-9][0-9]*" | sort --version-sort | tail -1
 }
 
 # Params
-#   $1 - Short TSBI Image version (like X.Y.Z-TIMESTAMP)
-#   $2 - Spring Boot kind (for example, 2.3)
-function getFullTsbiImageVersion() {
-    echo "${1//-/-$2-}"
+#   $1 - TSBI image path in artifactory
+#   $2 - TSBI image version
+function getTsbiImageDigest() {
+  artifactory_url=$(echo "$1" | sed "s@artifactory.datapwn.com@${artifactoryUrl}/api/docker@g")
+  artifactory_url=$(echo "$artifactory_url" | sed 's@tlnd-docker-\([a-zA-Z0-9]\+\)@tlnd-docker-\1/v2@g')
+  headers=$(curl -I -L -s --netrc-file "$netrcFile" \
+      -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+      "$artifactory_url/manifests/$2" | grep -Fi 'Docker-Content-Digest' | tr -d '\r')
+  echo -n "${headers}" | grep -o 'sha.*'
+}
+
+function getBaseImageName() {
+  base_image=$(grep -Fe dockerBaseImage gradle.properties | grep -o 'artifactory.datapwn.com.*@sha' | sed 's/@sha//g')
+  java_version=$(grep -e 'javaVersion[ ]*=' gradle.properties | grep -o '[0-9][0-9]*')
+  echo "${base_image//\$\{javaVersion\}/${java_version}}"
+}
+
+function getBaseImageDigest() {
+  grep -Fe dockerBaseImage gradle.properties | grep -o '@sha.*' | sed 's/@//g'
 }
 
 # Params
@@ -211,14 +229,10 @@ function getFullTsbiImageVersion() {
 #   $2 - Latest TSBI Image version
 #   $3 - File name for update
 function updateTsbiImage() {
-  currentFull=$(getFullTsbiImageVersion "$1" "$currentTsbiSbKind")
-  currentToolchain=$(getFullTsbiImageVersion "$1" "springboot")
-  latestFull=$(getFullTsbiImageVersion "$2" "$currentTsbiSbKind")
-  latestToolchain=$(getFullTsbiImageVersion "$2" "springboot")
   sed -i "s/$1/$2/g" "$3"
-  sed -i "s/$currentFull/$latestFull/g" "$3"
-  sed -i "s/$currentToolchain/$latestToolchain/g" "$3"
 }
+
+#################################################################################################################################
 
 currentTsbiImageVersion=$(getCurrentTsbiImageVersion)
 
@@ -226,7 +240,11 @@ if [ -z "$currentTsbiImageVersion" ]; then
   echo "Unable to get current TSBI Image version"
 fi
 
-latestTsbiImageVersion=$(getLatestTsbiImageVersion $artifactoryUrl)
+baseImageName=$(getBaseImageName)
+
+echo "Base image name is $baseImageName"
+
+latestTsbiImageVersion=$(getLatestTsbiImageVersion $baseImageName)
 
 if [ -z "$latestTsbiImageVersion" ]; then
   echo "Unable to get latest TSBI Image version"
@@ -238,8 +256,12 @@ if [ "$currentTsbiImageVersion" != "$latestTsbiImageVersion" ]; then
   echo "Updating TSBI Image version"
 
   updateTsbiImage "$currentTsbiImageVersion" "$latestTsbiImageVersion" "builderPodTemplate.yaml"
-  updateTsbiImage "$currentTsbiImageVersion" "$latestTsbiImageVersion" "Makefile"
   updateTsbiImage "$currentTsbiImageVersion" "$latestTsbiImageVersion" "Jenkinsfile"
+
+  currentImageDigest=$(getBaseImageDigest)
+  latestImageDigest=$(getTsbiImageDigest "$baseImageName" "$latestTsbiImageVersion")
+
+  updateTsbiImage "$currentImageDigest" "$latestImageDigest" "gradle.properties"
 
   exitStatus=0
 fi

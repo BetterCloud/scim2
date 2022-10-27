@@ -12,8 +12,7 @@ dependencyManagement {
     }
 
     dependencies {
-        dependency "com.google.guava:guava:$guava_version"
-        dependency "org.testng:testng:$testng_version"
+        dependency "org.testng:testng:$testngVersion"
     }
 
     imports {
