@@ -61,7 +61,7 @@ pipeline {
     BUILD_PROFILE = 'prod'
     BUILD_ENV = 'ci'
     BUILD_OPTS = '--stacktrace'
-    GRADLE_OPTS = '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1 -Xmx1500m'
+    GRADLE_OPTS = '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=1 -Xmx1500m --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED'
     SERVICE_REPO_PATH = "Talend/scim2"
   }
 
@@ -149,7 +149,7 @@ pipeline {
       }
       steps {
         container('talend-tsbi-springboot-builder') {
-          sh "gradle ${BUILD_OPTS} clean build"
+          sh "./gradlew ${BUILD_OPTS} clean build"
         }
       }
       post {
@@ -172,7 +172,7 @@ pipeline {
       }
       steps {
         container('talend-tsbi-springboot-builder') {
-          sh "gradle ${BUILD_OPTS} publish"
+          sh "./gradlew ${BUILD_OPTS} publish"
         }
       }
     }
@@ -191,7 +191,7 @@ pipeline {
       }
       steps {
         container('talend-tsbi-springboot-builder') {
-          sh "gradle ${BUILD_OPTS} publish reckonTagPush"
+          sh "./gradlew ${BUILD_OPTS} publish reckonTagPush"
           sh "git push --delete origin ${BRANCH_NAME}"
         }
       }
