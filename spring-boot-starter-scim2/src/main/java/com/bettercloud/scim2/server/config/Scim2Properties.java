@@ -13,6 +13,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.net.URI;
@@ -28,6 +29,7 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
+@Component
 @ConfigurationProperties(prefix = "scim2")
 public class Scim2Properties {
 
