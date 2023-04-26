@@ -5,7 +5,8 @@ plugins {
 dependencies {
     implementation project(":scim2-sdk-common")
 
-    implementation group: "javax.validation", name: "validation-api"
+    implementation "jakarta.validation:jakarta.validation-api:$jakartaValidationVersion"
+    implementation "jakarta.servlet:jakarta.servlet-api:$jakartaVersion"
     implementation group: "org.springframework.boot", name: "spring-boot-starter-web"
     implementation group: "com.google.guava", name: "guava"
 

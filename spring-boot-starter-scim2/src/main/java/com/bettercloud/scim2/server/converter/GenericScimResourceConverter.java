@@ -13,11 +13,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @AllArgsConstructor
 public class GenericScimResourceConverter<RESOURCE extends ScimResource> {

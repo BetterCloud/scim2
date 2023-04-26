@@ -61,8 +61,8 @@ public class SearchRequestTestCase
     assertEquals(searchRequest.getFilter(), "displayName sw \"smith\"");
     assertEquals(searchRequest.getSortBy(), null);
     assertEquals(searchRequest.getSortOrder(), null);
-    assertEquals(searchRequest.getStartIndex(), new Integer(1));
-    assertEquals(searchRequest.getCount(), new Integer(10));
+    assertEquals(searchRequest.getStartIndex(), Integer.valueOf(1));
+    assertEquals(searchRequest.getCount(), Integer.valueOf(10));
 
     searchRequest = JsonUtils.getObjectReader().
         forType(SearchRequest.class).
