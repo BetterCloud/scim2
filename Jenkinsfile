@@ -159,24 +159,6 @@ pipeline {
       }
     }
 
-    stage('Publish snapshot') {
-      when {
-        not {
-          anyOf {
-            branch "${releaseBranchPrefix}patch"
-            branch "${releaseBranchPrefix}minor"
-            branch "${releaseBranchPrefix}major"
-          }
-        }
-        expression { return params.PUBLISH_SNAPSHOT }
-      }
-      steps {
-        container('talend-tsbi-springboot-builder') {
-          sh "./gradlew ${BUILD_OPTS} publish"
-        }
-      }
-    }
-
     stage('Release') {
       when {
         anyOf {
@@ -193,6 +175,19 @@ pipeline {
         container('talend-tsbi-springboot-builder') {
           sh "./gradlew ${BUILD_OPTS} publish reckonTagPush"
           sh "git push --delete origin ${BRANCH_NAME}"
+        }
+      }
+    }
+
+    stage('Publish PR Build') {
+      when { branch "PR-*" }
+      environment {
+        GRGIT_USER="$GIT_CREDS_USR"
+        GRGIT_PASS="$GIT_CREDS_PSW"
+      }
+      steps {
+        container('talend-tsbi-springboot-builder') {
+          sh "./gradlew ${BUILD_OPTS} publish"
         }
       }
     }
