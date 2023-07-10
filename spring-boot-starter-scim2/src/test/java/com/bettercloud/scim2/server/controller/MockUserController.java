@@ -1,6 +1,6 @@
 package com.bettercloud.scim2.server.controller;
 
-import com.bettercloud.scim2.common.types.UserResource;
+import com.unboundid.scim2.common.types.UserResource;
 import com.bettercloud.scim2.server.annotation.ScimResource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

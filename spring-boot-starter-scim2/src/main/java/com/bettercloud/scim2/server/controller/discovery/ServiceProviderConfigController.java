@@ -1,13 +1,12 @@
 package com.bettercloud.scim2.server.controller.discovery;
 
-import com.bettercloud.scim2.common.GenericScimResource;
-import com.bettercloud.scim2.common.exceptions.ScimException;
-import com.bettercloud.scim2.common.types.ServiceProviderConfigResource;
-import com.bettercloud.scim2.common.utils.ApiConstants;
+import com.bettercloud.scim2.server.controller.BaseResourceController;
+import com.unboundid.scim2.common.GenericScimResource;
+import com.unboundid.scim2.common.exceptions.ScimException;
+import com.unboundid.scim2.common.types.ServiceProviderConfigResource;
+import com.unboundid.scim2.common.utils.ApiConstants;
 import com.bettercloud.scim2.server.BaseUrlProvider;
 import com.bettercloud.scim2.server.annotation.ScimResource;
-import com.bettercloud.scim2.server.config.Scim2Properties;
-import com.bettercloud.scim2.server.controller.BaseResourceController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,7 +1,7 @@
 package com.bettercloud.scim2.server.controller;
 
-import com.bettercloud.scim2.common.ScimResource;
-import com.bettercloud.scim2.common.types.AttributeDefinition;
+import com.unboundid.scim2.common.ScimResource;
+import com.unboundid.scim2.common.types.AttributeDefinition;
 import com.bettercloud.scim2.server.BaseUrlProvider;
 import com.bettercloud.scim2.server.ResourceTypeDefinition;
 import com.bettercloud.scim2.server.converter.GenericScimResourceConverter;

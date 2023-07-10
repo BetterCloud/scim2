@@ -4,9 +4,9 @@ package com.bettercloud.scim2.server;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.bettercloud.scim2.common.Path;
-import com.bettercloud.scim2.common.utils.JsonUtils;
-import com.bettercloud.scim2.common.utils.SchemaUtils;
+import com.unboundid.scim2.common.Path;
+import com.unboundid.scim2.common.utils.JsonUtils;
+import com.unboundid.scim2.common.utils.SchemaUtils;
 
 import java.util.Iterator;
 import java.util.Map;

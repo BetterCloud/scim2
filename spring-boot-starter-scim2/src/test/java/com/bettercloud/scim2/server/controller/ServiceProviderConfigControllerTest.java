@@ -1,10 +1,10 @@
 package com.bettercloud.scim2.server.controller;
 
-import com.bettercloud.scim2.common.GenericScimResource;
-import com.bettercloud.scim2.common.exceptions.ScimException;
-import com.bettercloud.scim2.common.types.AuthenticationScheme;
-import com.bettercloud.scim2.common.types.ServiceProviderConfigResource;
-import com.bettercloud.scim2.common.utils.JsonUtils;
+import com.unboundid.scim2.common.GenericScimResource;
+import com.unboundid.scim2.common.exceptions.ScimException;
+import com.unboundid.scim2.common.types.AuthenticationScheme;
+import com.unboundid.scim2.common.types.ServiceProviderConfigResource;
+import com.unboundid.scim2.common.utils.JsonUtils;
 import com.bettercloud.scim2.server.controller.discovery.ServiceProviderConfigController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;

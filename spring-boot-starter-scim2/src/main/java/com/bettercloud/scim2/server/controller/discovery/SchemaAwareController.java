@@ -1,19 +1,18 @@
 package com.bettercloud.scim2.server.controller.discovery;
 
-import com.bettercloud.scim2.common.exceptions.ResourceNotFoundException;
-import com.bettercloud.scim2.common.utils.ApiConstants;
+import com.bettercloud.scim2.server.controller.BaseResourceController;
+import com.unboundid.scim2.common.exceptions.ResourceNotFoundException;
+import com.unboundid.scim2.common.utils.ApiConstants;
 import com.bettercloud.scim2.server.BaseUrlProvider;
 import com.bettercloud.scim2.server.ResourceTypeDefinition;
-import com.bettercloud.scim2.server.config.Scim2Properties;
-import com.bettercloud.scim2.server.controller.BaseResourceController;
 import com.bettercloud.scim2.server.evaluator.SchemaAwareFilterEvaluator;
 import com.bettercloud.scim2.server.resourcetypes.ResourceTypeRegistry;
 import com.google.common.base.Throwables;
-import com.bettercloud.scim2.common.GenericScimResource;
-import com.bettercloud.scim2.common.ScimResource;
-import com.bettercloud.scim2.common.exceptions.ScimException;
-import com.bettercloud.scim2.common.filters.Filter;
-import com.bettercloud.scim2.common.messages.ListResponse;
+import com.unboundid.scim2.common.GenericScimResource;
+import com.unboundid.scim2.common.ScimResource;
+import com.unboundid.scim2.common.exceptions.ScimException;
+import com.unboundid.scim2.common.filters.Filter;
+import com.unboundid.scim2.common.messages.ListResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;

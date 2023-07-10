@@ -1,8 +1,8 @@
 package com.bettercloud.scim2.server;
 
 
-import com.bettercloud.scim2.common.Path;
-import com.bettercloud.scim2.common.types.AttributeDefinition;
+import com.unboundid.scim2.common.Path;
+import com.unboundid.scim2.common.types.AttributeDefinition;
 
 import java.util.Set;
 

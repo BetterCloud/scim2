@@ -1,5 +1,5 @@
 dependencies {
-    implementation project(":scim2-sdk-common")
+    implementation group: "com.unboundid.product.scim2", name: "scim2-sdk-common", version: "$scim_sdk"
 
     implementation group: "org.springframework.boot", name: "spring-boot-starter-web"
 

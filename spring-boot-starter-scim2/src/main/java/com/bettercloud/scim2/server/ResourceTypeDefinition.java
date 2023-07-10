@@ -1,10 +1,10 @@
 package com.bettercloud.scim2.server;
 
-import com.bettercloud.scim2.common.Path;
-import com.bettercloud.scim2.common.types.AttributeDefinition;
-import com.bettercloud.scim2.common.types.ResourceTypeResource;
-import com.bettercloud.scim2.common.types.SchemaResource;
-import com.bettercloud.scim2.common.utils.SchemaUtils;
+import com.unboundid.scim2.common.Path;
+import com.unboundid.scim2.common.types.AttributeDefinition;
+import com.unboundid.scim2.common.types.ResourceTypeResource;
+import com.unboundid.scim2.common.types.SchemaResource;
+import com.unboundid.scim2.common.utils.SchemaUtils;
 import com.bettercloud.scim2.server.annotation.ScimResource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

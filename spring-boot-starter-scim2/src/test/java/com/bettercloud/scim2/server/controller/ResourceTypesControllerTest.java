@@ -1,9 +1,9 @@
 package com.bettercloud.scim2.server.controller;
 
-import com.bettercloud.scim2.common.GenericScimResource;
-import com.bettercloud.scim2.common.ScimResource;
-import com.bettercloud.scim2.common.exceptions.ScimException;
-import com.bettercloud.scim2.common.messages.ListResponse;
+import com.unboundid.scim2.common.GenericScimResource;
+import com.unboundid.scim2.common.ScimResource;
+import com.unboundid.scim2.common.exceptions.ScimException;
+import com.unboundid.scim2.common.messages.ListResponse;
 import com.bettercloud.scim2.server.controller.discovery.ResourceTypesController;
 import org.junit.Test;
 import org.junit.runner.RunWith;

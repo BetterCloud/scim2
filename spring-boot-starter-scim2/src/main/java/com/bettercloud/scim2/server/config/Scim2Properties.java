@@ -1,13 +1,13 @@
 package com.bettercloud.scim2.server.config;
 
-import com.bettercloud.scim2.common.types.AuthenticationScheme;
-import com.bettercloud.scim2.common.types.BulkConfig;
-import com.bettercloud.scim2.common.types.ChangePasswordConfig;
-import com.bettercloud.scim2.common.types.ETagConfig;
-import com.bettercloud.scim2.common.types.FilterConfig;
-import com.bettercloud.scim2.common.types.PatchConfig;
-import com.bettercloud.scim2.common.types.ServiceProviderConfigResource;
-import com.bettercloud.scim2.common.types.SortConfig;
+import com.unboundid.scim2.common.types.AuthenticationScheme;
+import com.unboundid.scim2.common.types.BulkConfig;
+import com.unboundid.scim2.common.types.ChangePasswordConfig;
+import com.unboundid.scim2.common.types.ETagConfig;
+import com.unboundid.scim2.common.types.FilterConfig;
+import com.unboundid.scim2.common.types.PatchConfig;
+import com.unboundid.scim2.common.types.ServiceProviderConfigResource;
+import com.unboundid.scim2.common.types.SortConfig;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,12 +1,12 @@
 package com.bettercloud.scim2.server;
 
-import com.bettercloud.scim2.common.GenericScimResource;
-import com.bettercloud.scim2.common.Path;
-import com.bettercloud.scim2.common.ScimResource;
-import com.bettercloud.scim2.common.exceptions.BadRequestException;
-import com.bettercloud.scim2.common.messages.PatchOperation;
-import com.bettercloud.scim2.common.types.Meta;
-import com.bettercloud.scim2.common.utils.StaticUtils;
+import com.unboundid.scim2.common.GenericScimResource;
+import com.unboundid.scim2.common.Path;
+import com.unboundid.scim2.common.ScimResource;
+import com.unboundid.scim2.common.exceptions.BadRequestException;
+import com.unboundid.scim2.common.messages.PatchOperation;
+import com.unboundid.scim2.common.types.Meta;
+import com.unboundid.scim2.common.utils.StaticUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

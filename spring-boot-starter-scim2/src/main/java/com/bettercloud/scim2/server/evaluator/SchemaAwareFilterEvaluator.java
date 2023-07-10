@@ -1,8 +1,8 @@
 package com.bettercloud.scim2.server.evaluator;
 
-import com.bettercloud.scim2.common.Path;
-import com.bettercloud.scim2.common.types.AttributeDefinition;
-import com.bettercloud.scim2.common.utils.FilterEvaluator;
+import com.unboundid.scim2.common.Path;
+import com.unboundid.scim2.common.types.AttributeDefinition;
+import com.unboundid.scim2.common.utils.FilterEvaluator;
 import com.bettercloud.scim2.server.ResourceTypeDefinition;
 
 /**

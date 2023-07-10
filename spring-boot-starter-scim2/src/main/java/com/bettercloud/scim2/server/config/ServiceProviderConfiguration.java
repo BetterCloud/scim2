@@ -1,6 +1,6 @@
 package com.bettercloud.scim2.server.config;
 
-import com.bettercloud.scim2.common.types.ServiceProviderConfigResource;
+import com.unboundid.scim2.common.types.ServiceProviderConfigResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
