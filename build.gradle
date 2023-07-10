@@ -35,7 +35,7 @@ subprojects {
     version = rootProject.version
 
     dependencies {
-        implementation group: "com.google.guava", name: "guava", version: "$guava_version"
+        implementation group: "com.google.guava", name: "guava", version: "20.0"
 
         compileOnly group: "org.projectlombok", name: "lombok", version: "1.18.20"
         annotationProcessor group: "org.projectlombok", name: "lombok", version: "1.18.20"

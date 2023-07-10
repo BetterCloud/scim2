@@ -4,9 +4,9 @@ test {
 }
 
 dependencies {
-    implementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: "$jackson_version"
-    implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: "$jackson_version"
-    implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "$jackson_databind_version"
-    implementation group: "com.google.guava", name: "guava", version: "$guava_version"
-    testImplementation group: "org.testng", name: "testng", version: "$testng_version"
+    implementation group: "com.fasterxml.jackson.core", name: "jackson-core", version: "2.7.4"
+    implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: "2.7.4"
+    implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.7.9.5"
+    implementation group: "com.google.guava", name: "guava", version: "20.0"
+    testImplementation group: "org.testng", name: "testng", version: "6.4"
 }
