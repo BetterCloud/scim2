@@ -5,31 +5,43 @@ spec:
     - name: talend-registry
   containers:
     - name: talend-tsbi-springboot-builder
-      image: artifactory.datapwn.com/tlnd-docker-prod/talend/common/tsbi/jdk17-svc-springboot-builder:3.0.9-2.7-20220930152032
+      image: artifactory.datapwn.com/tlnd-docker-prod/talend/common/tsbi/jdk17-dev-base:3.1.18-20230804115923
       resources:
         requests:
           memory: "2G"
           cpu: "2"
         limits:
           memory: "6G"
-          cpu: "3"
+          cpu: "4"
       command:
         - cat
       tty: true
       volumeMounts:
-        - name: docker
-          mountPath: /var/run/docker.sock
         - name: efs-jenkins-tpsvc-maven
           mountPath: /root/.m2/repository
-        - name: efs-jenkins-tpsvc-gradle
-          mountPath: /root/.gradle/cache
+        - name: gradle-cache
+          mountPath: /root/.gradle/caches/modules-2/files-2.1
+      env:
+        - name: DOCKER_HOST
+          value: tcp://localhost:2375
+    - name: docker-daemon
+      image: artifactory.datapwn.com/docker-io-remote/docker:24.0.5-dind
+      env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: docker-cache
+          mountPath: /var/lib/docker
   volumes:
-    - name: docker
-      hostPath:
-        path: /var/run/docker.sock
     - name: efs-jenkins-tpsvc-maven
       persistentVolumeClaim:
         claimName: efs-jenkins-tpsvc-m2
-    - name: efs-jenkins-tpsvc-gradle
-      persistentVolumeClaim:
-        claimName: efs-jenkins-tpsvc-gradle
+    - name: gradle-cache
+      hostPath:
+        path: /data/gradle/caches/modules-2/files-2.1
+    - name: docker-cache
+      hostPath:
+        path: /tmp
+        type: Directory

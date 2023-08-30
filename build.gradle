@@ -78,3 +78,14 @@ subprojects {
         }
     }
 }
+
+// This task is used by Jenkinsfile
+tasks.register('versionInformation') {
+    doLast {
+        if (project.hasProperty("version")) {
+            new File("$projectDir/version.txt").text = "$version"
+        } else {
+            throw new GradleException('No version properties')
+        }
+    }
+}
