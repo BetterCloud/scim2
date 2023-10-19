@@ -100,7 +100,6 @@ pipeline {
         BUILD_ENV              = 'ci'
         DOCKER_REGISTRY        = 'artifactory.datapwn.com/tlnd-docker-dev/talend/platform-services'
         DOCKER_IMAGE_NAME_FILE = "docker.image.name.yaml"
-        RECKON_OPTIONS         = '-Preckon.scope=patch'
     }
 
     options {
@@ -158,6 +157,7 @@ pipeline {
                         // envs required to publish artifacts
                         env.ORG_GRADLE_PROJECT_nexusTpsvcDeployUsername = "${NEXUS_TALEND_USER}"
                         env.ORG_GRADLE_PROJECT_nexusTpsvcDeployPassword = "${NEXUS_TALEND_PASSWORD}"
+                        env.RECKON_OPTIONS         = '-Preckon.scope=patch'
                     }
                 }
             }
