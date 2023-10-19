@@ -19,7 +19,7 @@ def nexusCredentials = usernamePassword(
         usernameVariable: 'NEXUS_TALEND_USER')
 
 def gradlew(String... args) {
-    sh "./gradlew -s --max-workers=2 --no-daemon ${RECKON_OPTIONS} ${args.join(' ')}"
+    sh "./gradlew -s --max-workers=2 --no-daemon ${env.RECKON_OPTIONS} ${args.join(' ')}"
 }
 
 def hasChangesIn(String module) {
