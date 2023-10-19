@@ -200,6 +200,9 @@ pipeline {
                     env.IMAGE_VERSION_WITH_TIMESTAMP = "${IMAGE_VERSION}-${BUILD_TIMESTAMP}"
                     echo "Project Version is ${ARTIFACT_VERSION} - docker image version is ${IMAGE_VERSION}"
                 }
+                sh '''
+                    rm -f version.txt 
+                '''
             }
         }
 
