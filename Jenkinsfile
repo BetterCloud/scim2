@@ -19,7 +19,7 @@ def nexusCredentials = usernamePassword(
         usernameVariable: 'NEXUS_TALEND_USER')
 
 def gradlew(String... args) {
-    sh "./gradlew -s --max-workers=2 --no-daemon ${env.RECKON_OPTIONS} ${args.join(' ')}"
+    sh "./gradlew -s --max-workers=2 --no-daemon ${args.join(' ')}"
 }
 
 def hasChangesIn(String module) {
@@ -189,7 +189,7 @@ pipeline {
 
         stage("Pre-Build") {
             steps {
-                gradlew("versionInformation")
+                gradlew("versionInformation", env.RECKON_OPTIONS)
                 script {
                     env.ARTIFACT_VERSION = readFile "version.txt"
                     if (BRANCH_NAME =~ /(PR-.*)/) {
@@ -205,7 +205,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                gradlew("clean", "build")
+                gradlew("clean", "build", env.RECKON_OPTIONS)
             }
         }
 
@@ -221,7 +221,8 @@ pipeline {
                             "-Dsonar.analysisCache.enabled=false",
                             "-Dsonar.host.url=https://sonar.datapwn.com",
                             "-Dsonar.projectKey=${PROJECT_TEAM}:${getServiceName(decodedJobName)}",
-                            "-Dsonar.projectName=TPSVC_${getServiceName(decodedJobName)}")
+                            "-Dsonar.projectName=TPSVC_${getServiceName(decodedJobName)}"
+                            , env.RECKON_OPTIONS)
                 }
             }
         }
@@ -237,7 +238,7 @@ pipeline {
                 GRGIT_PASS="$GIT_CREDS_PSW"
             }
             steps {
-                gradlew("publish", "reckonTagPush")
+                gradlew("publish", "reckonTagPush", env.RECKON_OPTIONS)
                 sh "git push --delete origin ${BRANCH_NAME}"
             }
         }
@@ -249,7 +250,7 @@ pipeline {
                 GRGIT_PASS="$GIT_CREDS_PSW"
             }
             steps {
-                gradlew("publish")
+                gradlew("publish", env.RECKON_OPTIONS)
             }
         }
     }
