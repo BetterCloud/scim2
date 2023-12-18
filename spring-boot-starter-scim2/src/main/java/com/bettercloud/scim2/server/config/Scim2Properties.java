@@ -29,7 +29,6 @@ import jakarta.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-@Component
 @ConfigurationProperties(prefix = "scim2")
 public class Scim2Properties {
 

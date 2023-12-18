@@ -53,4 +53,10 @@
     <Match>
         <Bug pattern="URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD" />
     </Match>
+    <Match>
+        <Bug pattern="CT_CONSTRUCTOR_THROW" />
+    </Match>
+    <Match>
+        <Bug pattern="MS_EXPOSE_REP" />
+    </Match>
 </FindBugsFilter>

@@ -216,7 +216,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'sonar-credentials',
                         passwordVariable: 'SONAR_PASSWORD', usernameVariable: 'SONAR_LOGIN')]) {
-                    gradlew("sonarqube",
+                    gradlew("sonar",
                             "-x test",
                             "-Dsonar.login='$SONAR_LOGIN'",
                             "-Dsonar.password='$SONAR_PASSWORD'",
