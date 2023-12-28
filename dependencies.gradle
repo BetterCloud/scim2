@@ -8,7 +8,7 @@ configurations.all {
 
 dependencyManagement {
     imports {
-        mavenBom "org.talend.tsbi.java.springboot-bom:$tsbiBomVersion"
+        mavenBom "org.talend.tsbi.java.springboot-bom:$tsbiFrameworkVersion:$tsbiBomVersion"
     }
 
     dependencies {
