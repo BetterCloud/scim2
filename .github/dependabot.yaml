@@ -1,0 +1,22 @@
+version: 2
+registries:
+  artifacts-zl:
+    type: maven-repository
+    url: https://artifacts-zl.talend.com/nexus
+    # these secrets should be added for Dependabot on each repo
+    username: ${{ secrets.NEXUS_TALEND_USER }}
+    password: ${{ secrets.NEXUS_TALEND_PASSWORD }}
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    allow:
+      - dependency-type: "all"
+    registries:
+      - artifacts-zl
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 100
+    labels:
+      - "tpsvc"
+      - "cve"
+      - "dependencies"
