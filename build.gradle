@@ -10,7 +10,7 @@ buildscript {
         pmdVersion="6.55.0"
         jacocoVersion="0.8.11"
         spotbugsVersion="4.8.1"
-        spotbugsPluginVersion="4.6.0"
+        spotbugsPluginVersion="4.7.5"
         sonarqubePluginVersion="4.4.1.3373"
 
         reckonVersion="0.18.1"
