@@ -2,7 +2,7 @@ buildscript {
     ext {
         tsbiFrameworkVersion="3.2"
         tsbiBomVersion="0.0.5"
-        springBootVersion="3.2.0"
+        springBootVersion="3.2.1"
 
         securityBomVersion="4.2.0"
 
