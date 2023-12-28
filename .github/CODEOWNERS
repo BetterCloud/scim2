@@ -1,1 +1,5 @@
 * @Talend/tpsvc-dev
+
+# Specific ownership for CI/dependabot automation
+.github/workflows/** @Talend/tpsvc-dev @build-talend-tpsvc
+**.gradle @Talend/tpsvc-dev @build-talend-tpsvc
