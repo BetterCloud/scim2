@@ -13,7 +13,6 @@ buildscript {
         spotbugsPluginVersion="4.7.5"
         sonarqubePluginVersion="4.4.1.3373"
 
-        reckonVersion="0.18.1"
         // workaround for reckon issue with Java 8
         grgitVersion="5.2.1"
 
@@ -43,12 +42,6 @@ buildscript {
 
 plugins {
     id "org.sonarqube" version "$sonarqubePluginVersion"
-    id "org.ajoberstar.reckon" version "$reckonVersion"
-}
-
-reckon {
-    scopeFromProp()
-    snapshotFromProp()
 }
 
 if (!hasProperty('buildTimestamp')) {

@@ -1,3 +1,19 @@
+buildscript {
+    ext {
+        reckonVersion="0.18.2"
+    }
+}
+
+plugins {
+    id "org.ajoberstar.reckon.settings" version "$reckonVersion"
+}
+
+reckon {
+    defaultInferredScope = 'patch'
+    scopeFromProp()
+    snapshotFromProp()
+}
+
 rootProject.name = 'scim2'
 include 'scim2-sdk-common'
 include 'spring-boot-starter-scim2'
