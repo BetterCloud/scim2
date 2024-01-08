@@ -8,8 +8,7 @@ permissions:
 jobs:
   pr-validation:
     runs-on:
-      - Linux
-      - X64
+      - ubuntu-latest
     if: ${{ github.actor == 'dependabot[bot]' }}
     steps:
       - name: "Checkout sources"
