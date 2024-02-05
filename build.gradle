@@ -68,8 +68,8 @@ subprojects {
         maven {
             url 'https://artifacts-zl.talend.com/nexus/content/repositories/tpsvc'
             credentials {
-                username nexusTpsvcUsername
-                password nexusTpsvcPassword
+                username nexusUsername
+                password nexusPassword
             }
         }
 

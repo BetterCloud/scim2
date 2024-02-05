@@ -136,9 +136,9 @@ pipeline {
                 withCredentials([nexusCredentials]) {
                     script {
                         // inject required credentials (then we don't need the gradle settings file)
-                        env.ORG_GRADLE_PROJECT_nexusTpsvcUsername = "${NEXUS_TALEND_USER}"
-                        env.ORG_GRADLE_PROJECT_nexusTpsvcPassword = "${NEXUS_TALEND_PASSWORD}"
-                        env.ORG_GRADLE_PROJECT_nexusTpsvcUrl      = env.NEXUS_TPSVC_URL
+                        env.ORG_GRADLE_PROJECT_nexusUsername = "${NEXUS_TALEND_USER}"
+                        env.ORG_GRADLE_PROJECT_nexusPassword = "${NEXUS_TALEND_PASSWORD}"
+                        env.ORG_GRADLE_PROJECT_nexusUrl      = env.NEXUS_TPSVC_URL
 
                         env.ORG_GRADLE_PROJECT_nexusTalendSnapshotsUsername = "${NEXUS_TALEND_USER}"
                         env.ORG_GRADLE_PROJECT_nexusTalendSnapshotsPassword = "${NEXUS_TALEND_PASSWORD}"
@@ -154,9 +154,6 @@ pipeline {
                         env.ORG_GRADLE_PROJECT_nexusTalendOpenSourceReleaseUrl      = env.NEXUS_TALEND_OPEN_SOURCE_RELEASE_URL
                         env.ORG_GRADLE_PROJECT_nexusTalendOpenSourceSnapshotUrl     = env.NEXUS_TALEND_OPEN_SOURCE_SNAPSHOT_URL
 
-                        // envs required to publish artifacts
-                        env.ORG_GRADLE_PROJECT_nexusTpsvcDeployUsername = "${NEXUS_TALEND_USER}"
-                        env.ORG_GRADLE_PROJECT_nexusTpsvcDeployPassword = "${NEXUS_TALEND_PASSWORD}"
                         env.RECKON_OPTIONS         = '-Preckon.scope=patch'
                     }
                 }

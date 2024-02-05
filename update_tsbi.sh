@@ -10,7 +10,7 @@ set -x
 netrcFile="$1"
 nexusReleasesUrl="$2"
 artifactoryUrl="$3"
-nexusTpsvcUrl="$4"
+nexusUrl="$4"
 
 if [ -z "$netrcFile" ]; then
   echo '.netrc file path has to be the first argument.'
@@ -28,8 +28,8 @@ if [ -z "$artifactoryUrl" ]; then
   artifactoryUrl="https://artifactory.datapwn.com/artifactory"
 fi
 
-if [ -z "$nexusTpsvcUrl" ]; then
-  nexusTpsvcUrl="https://artifacts-zl.talend.com/nexus/content/repositories/tpsvc"
+if [ -z "$nexusUrl" ]; then
+  nexusUrl="https://artifacts-zl.talend.com/nexus/content/repositories/tpsvc"
 fi
 
 # exit status 0 means the script has updated the version
@@ -70,7 +70,7 @@ function updateGradleProperties() {
 # Params
 #   $1 - Dependency name (for example "Platform SDK")
 #   $2 - Property name (for example "platformSdkVersion")
-#   $3 - Nexus repo for the dependency (for example "$nexusTpsvcUrl")
+#   $3 - Nexus repo for the dependency (for example "$nexusUrl")
 #   $4 - Dependency path in Nexus repo (for example, "org/talend/platform/sdk/scim-client")
 function updateDependencyIfNecessary() {
   dependencyName="$1"
@@ -182,10 +182,10 @@ fi
 #################################################################################################################################
 ### Updating misc dependencies
 
-updateDependencyIfNecessary "Platform SDK" "platformSdkVersion" "$nexusTpsvcUrl" "org/talend/platform/sdk/scim-client"
+updateDependencyIfNecessary "Platform SDK" "platformSdkVersion" "$nexusUrl" "org/talend/platform/sdk/scim-client"
 exitStatus=$((exitStatus & $?))
 
-updateDependencyIfNecessary "Security BOM" "securityBomVersion" "$nexusTpsvcUrl" "org/talend/pscommons/security-bom"
+updateDependencyIfNecessary "Security BOM" "securityBomVersion" "$nexusUrl" "org/talend/pscommons/security-bom"
 exitStatus=$((exitStatus & $?))
 
 #################################################################################################################################

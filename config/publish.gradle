@@ -6,13 +6,13 @@ java {
 
 publishing {
     repositories {
-        if (project.hasProperty('nexusTpsvcDeployUsername')) {
+        if (project.hasProperty('nexusUsername')) {
             maven {
                 credentials {
-                    username nexusTpsvcDeployUsername
-                    password nexusTpsvcDeployPassword
+                    username nexusUsername
+                    password nexusPassword
                 }
-                url project.getVersion().toString().contains('SNAPSHOT') ? nexusTalendSnapshotsUrl : nexusTpsvcUrl
+                url project.getVersion().toString().contains('SNAPSHOT') ? nexusTalendSnapshotsUrl : nexusUrl
             }
         } else {
             mavenLocal()
