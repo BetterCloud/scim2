@@ -1,24 +1,26 @@
 buildscript {
     ext {
-        tsbiFrameworkVersion="3.2"
-        tsbiBomVersion="0.0.5"
-        springBootVersion="3.2.1"
+        tsbiFrameworkVersion = "3.2"
+        tsbiBomVersion = "0.0.11"
+        springBootVersion = "3.2.2"
 
-        securityBomVersion="4.2.0"
+        securityBomVersion = "5.2.0"
 
-        checkstyleVersion="10.3.4"
-        pmdVersion="6.55.0"
-        jacocoVersion="0.8.11"
-        spotbugsVersion="4.8.1"
-        spotbugsPluginVersion="4.7.5"
-        sonarqubePluginVersion="4.4.1.3373"
+        checkstyleVersion = "10.3.4"
+        pmdVersion = "6.55.0"
+        jacocoVersion = "0.8.11"
+        spotbugsVersion = "4.8.1"
+        spotbugsPluginVersion = "4.7.5"
+        sonarqubePluginVersion = "4.4.1.3373"
 
         // workaround for reckon issue with Java 8
-        grgitVersion="5.2.1"
+        grgitVersion = "5.2.1"
 
-        testngVersion="6.4"
-        jakartaVersion="6.0.0"
-        jakartaValidationVersion="3.0.2"
+        testngVersion = "6.4"
+        jakartaVersion = "6.0.0"
+        jakartaValidationVersion = "3.0.2"
+
+        lombokVersion = "1.18.30"
 
     }
     repositories {
@@ -52,6 +54,9 @@ configurations.all {
     resolutionStrategy {
         cacheDynamicVersionsFor 0, 'seconds'
     }
+    exclude group: "log4j", module: "log4j"
+    exclude group: "org.apache.logging.log4j"
+    exclude group: "org.slf4j", module: "slf4j-log4j12"
 }
 
 subprojects {
@@ -59,8 +64,6 @@ subprojects {
 
     apply from: rootProject.file('config/java.gradle')
     apply from: rootProject.file('config/publish.gradle')
-
-    apply from: rootProject.file('dependencies.gradle')
 
     repositories {
         mavenCentral()

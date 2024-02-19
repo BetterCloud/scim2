@@ -3,6 +3,8 @@ plugins {
 }
 
 dependencies {
+    implementation(platform("org.talend.tsbi.java.springboot-bom:$tsbiFrameworkVersion:$tsbiBomVersion"))
+    implementation(platform("org.talend.pscommons:security-bom:$securityBomVersion"))
     implementation project(":scim2-sdk-common")
 
     implementation "jakarta.validation:jakarta.validation-api:$jakartaValidationVersion"
@@ -10,9 +12,9 @@ dependencies {
     implementation group: "org.springframework.boot", name: "spring-boot-starter-web"
     implementation group: "com.google.guava", name: "guava"
 
-    compileOnly group: "org.projectlombok", name: "lombok"
-    annotationProcessor group: "org.projectlombok", name: "lombok"
-    annotationProcessor group: "org.springframework.boot", name: "spring-boot-configuration-processor"
+    compileOnly group: "org.projectlombok", name: "lombok", version:"$lombokVersion"
+    annotationProcessor group: "org.projectlombok", name: "lombok", version:"$lombokVersion"
+    annotationProcessor group: "org.springframework.boot", name: "spring-boot-configuration-processor", version: "$springBootVersion"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "junit:junit"

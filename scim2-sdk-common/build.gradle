@@ -8,14 +8,16 @@ test {
 }
 
 dependencies {
+    implementation(platform("org.talend.tsbi.java.springboot-bom:$tsbiFrameworkVersion:$tsbiBomVersion"))
+    implementation(platform("org.talend.pscommons:security-bom:$securityBomVersion"))
     implementation group: "com.fasterxml.jackson.core", name: "jackson-core"
     implementation group: "com.fasterxml.jackson.core", name: "jackson-annotations"
     implementation group: "com.fasterxml.jackson.core", name: "jackson-databind"
     implementation group: "com.google.guava", name: "guava"
-    implementation group: "org.projectlombok", name: "lombok"
+    implementation group: "org.projectlombok", name: "lombok", version:"$lombokVersion"
 
-    compileOnly group: "org.projectlombok", name: "lombok"
-    annotationProcessor group: "org.projectlombok", name: "lombok"
+    compileOnly group: "org.projectlombok", name: "lombok", version:"$lombokVersion"
+    annotationProcessor group: "org.projectlombok", name: "lombok", version:"$lombokVersion"
 
-    testImplementation group: "org.testng", name: "testng"
+    testImplementation group: "org.testng", name: "testng", version: "$testngVersion"
 }
